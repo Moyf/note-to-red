@@ -3,7 +3,7 @@
     "name": "Note to RED",
     "version": "1.0.0",
     "minAppVersion": "0.15.0",
-    "description": "Convert Obsidian notes to RED (Xiaohongshu) style images",
+    "description": "Convert Markdown notes to RED (Xiaohongshu) style images",
     "author": "Yeban",
     "isDesktopOnly": true,
     "assets": [
