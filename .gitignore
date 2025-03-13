@@ -6,6 +6,7 @@ npm-debug.log
 # Build
 main.js
 *.js.map
+data.json
 
 # macOS
 .DS_Store
