@@ -1,0 +1,69 @@
+{
+    "id": "cyber",
+    "name": "赛博朋克",
+    "styles": {
+        "imagePreview": "background: #0a0a16; padding: 32px 28px;",
+        "header": {
+            "avatar": {
+                "container": "width: 40px; height: 40px; border-radius: 2px; overflow: hidden; border: 1px solid #00ffaa80; box-shadow: 0 0 12px #00ffaa40;",
+                "placeholder": "background: #1a1a2e; transition: all 0.3s ease;",
+                "image": "object-fit: cover; transition: transform 0.3s ease; filter: saturate(1.4);"
+            },
+            "nameContainer": "display: flex; align-items: center; gap: 10px;",
+            "userName": "font-size: 16px; font-weight: 700; color: #00ffaa; text-shadow: 0 0 12px #00ffaa80;",
+            "userId": "font-size: 14px; color: #4dffbe; font-family: 'JetBrains Mono', monospace;",
+            "postTime": "font-size: 13px; color: #2f8f98; font-family: 'JetBrains Mono', monospace;",
+            "verifiedIcon": "width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; color: #000000; background-color: #00ffaa; border-radius: 2px; font-size: 10px; flex-shrink: 0; border: 1px solid #00ffaa80; box-shadow: 0 0 12px #00ffaa40;"
+        },
+        "footer": {
+            "container": "position: absolute; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 14px; padding: 16px; color: #4dffbe; font-size: 13px; border-top: 1px solid #00ffaa80; background: #0a0a16; font-family: 'JetBrains Mono', monospace;",
+            "text": "color: inherit; transition: color 0.2s ease; white-space: nowrap;",
+            "separator": "color: #2f8f98;"
+        },
+        "title": {
+            "h2": {
+                "base": "margin: 0; font-size: 1.5em; letter-spacing: 0.02em; line-height: 1.5;",
+                "content": "font-weight: 700; color: #00ffaa; text-shadow: 0 0 16px #00ffaa80;",
+                "after": "content: ' //'; color: #2f8f98;"
+            },
+            "h3": {
+                "base": "margin: 26px 0 0; font-size: 1.25em; line-height: 1.5;",
+                "content": "font-weight: 700; color: #00ffaa;",
+                "after": "content: ' //';"
+            },
+            "base": {
+                "base": "margin: 22px 0 0; font-size: 1.1em; line-height: 1.5;",
+                "content": "font-weight: 700; color: #00ffaa;",
+                "after": ""
+            }
+        },
+        "paragraph": "line-height: 1.75; margin-bottom: 1.1em; font-size: 15px; color: #e0e0e0;",
+        "emphasis": {
+            "strong": "font-weight: 700; color: #00ffaa; text-shadow: 0 0 12px #00ffaa80;",
+            "em": "font-style: normal; color: #4dffbe; background: rgba(77,255,190,0.15); padding: 0 4px;",
+            "del": "text-decoration: line-through; color: #2f8f98; opacity: 0.9;"
+        },
+        "list": {
+            "container": "padding-left: 26px; margin-bottom: 1.1em; color: #7feceb;",
+            "item": "margin-bottom: 0.7em; font-size: 15px; color: #7feceb; line-height: 1.75;",
+            "taskList": "list-style: none; margin-left: -22px; font-size: 15px; color: #7feceb; line-height: 1.75;"
+        },
+        "code": {
+            "block": "background: #1a1a2e; padding: 1.2em; border-radius: 4px; font-size: 14px; font-family: 'JetBrains Mono', monospace; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; color: #00ffaa; margin: 1.3em 0; border: 1px solid #00ffaa80; box-shadow: 0 0 24px #00ffaa20;",
+            "inline": "background: #1a1a2e; padding: 4px 10px; border-radius: 4px; color: #00ffaa; font-size: 14px; font-family: 'JetBrains Mono', monospace; border: 1px solid #00ffaa80;"
+        },
+        "quote": "border-left: 3px solid #00ffaa; padding: 0 0 0 20px; margin: 1.5em 0; color: #4dffbe; font-style: normal; font-size: 15px; line-height: 1.75; text-shadow: 0 0 12px #00ffaa40;",
+        "image": "max-width: 100%; height: auto; margin: 1.5em auto; border: 2px solid #00ffaa80; box-shadow: 0 0 32px #00ffaa30; filter: saturate(1.2);",
+        "link": "color: #00ffaa; text-decoration: none; border-bottom: 2px solid #00ffaa80; transition: all 0.2s ease; text-shadow: 0 0 12px #00ffaa40;",
+        "table": {
+            "container": "width: 100%; margin: 1.5em 0; border-collapse: collapse; border: 2px solid #00ffaa80; box-shadow: 0 0 24px #00ffaa20;",
+            "header": "background: #1a1a2e; font-weight: 700; color: #00ffaa; padding: 14px; border: 2px solid #00ffaa80; text-shadow: 0 0 12px #00ffaa40;",
+            "cell": "padding: 14px; color: #7feceb; border: 2px solid #00ffaa80; font-family: 'JetBrains Mono', monospace;"
+        },
+        "hr": "border: none; border-top: 2px solid #00ffaa80; margin: 32px 0; box-shadow: 0 0 24px #00ffaa30;",
+        "footnote": {
+            "ref": "color: #4dffbe; text-decoration: none; font-size: 0.9em; font-family: 'JetBrains Mono', monospace;",
+            "backref": "color: #4dffbe; text-decoration: none; font-size: 0.9em; font-family: 'JetBrains Mono', monospace;"
+        }
+    }
+}
