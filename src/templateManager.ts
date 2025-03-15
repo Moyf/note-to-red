@@ -209,8 +209,12 @@ export class TemplateManager {
                 if (!el.querySelector('.content')) {
                     const content = document.createElement('span');
                     content.className = 'content';
-                    content.innerHTML = el.innerHTML;
-                    el.innerHTML = '';
+                    
+                    // 将原有内容移动到新的 span 中
+                    while (el.firstChild) {
+                        content.appendChild(el.firstChild);
+                    }
+                    
                     el.appendChild(content);
 
                     const after = document.createElement('span');

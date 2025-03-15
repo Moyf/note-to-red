@@ -60,9 +60,9 @@ export class RedView extends ItemView {
         // 锁定按钮
         this.lockButton = toolbar.createEl('button', {
             cls: 'red-lock-button',
+            text: '🔓',
             attr: { 'aria-label': '关闭实时预览状态' }
         });
-        this.lockButton.innerHTML = '🔓';
         this.lockButton.addEventListener('click', () => this.togglePreviewLock());
     
         // 创建中间控件容器
@@ -212,12 +212,12 @@ export class RedView extends ItemView {
         // 底部工具栏
         const bottomBar = container.createEl('div', { cls: 'red-bottom-bar' });
 
-        // 添加使用说明按钮
+        // 帮助按钮
         const helpButton = bottomBar.createEl('button', {
             cls: 'red-help-button',
+            text: '❓',
             attr: { 'aria-label': '使用指南' }
         });
-        helpButton.innerHTML = '❓';
         
         // 更新帮助文本
         const tooltip = bottomBar.createEl('div', {
@@ -239,7 +239,11 @@ export class RedView extends ItemView {
         const likeButton = bottomControlsGroup.createEl('button', { 
             cls: 'red-like-button'
         });
-        likeButton.innerHTML = '<span style="margin-right: 4px">❤️</span>关于作者';
+        const heartSpan = likeButton.createEl('span', {
+            text: '❤️',
+            attr: { style: 'margin-right: 4px' }
+        });
+        likeButton.createSpan({ text: '关于作者' });
         likeButton.addEventListener('click', () => {
             DonateManager.showDonateModal(this.containerEl);
         });
@@ -353,6 +357,18 @@ export class RedView extends ItemView {
         }
     }
 
+    private async togglePreviewLock() {
+        this.isPreviewLocked = !this.isPreviewLocked;
+        const lockIcon = this.isPreviewLocked ? '🔒' : '🔓';
+        const lockStatus = this.isPreviewLocked ? '开启实时预览状态' : '关闭实时预览状态';
+        this.lockButton.setText(lockIcon);
+        this.lockButton.setAttribute('aria-label', lockStatus);
+        
+        if (!this.isPreviewLocked) {
+            await this.updatePreview();
+        }
+    }
+
     async onFileOpen(file: TFile | null) {
         this.currentFile = file;
         this.currentImageIndex = 0;  // 重置图片索引
@@ -369,21 +385,9 @@ export class RedView extends ItemView {
 
         this.updateControlsState(true);
         this.isPreviewLocked = false;
-        this.lockButton.innerHTML = '🔓';
+        this.lockButton.setText('🔓');
         await this.updatePreview();
     }
-    private async togglePreviewLock() {
-        this.isPreviewLocked = !this.isPreviewLocked;
-        const lockIcon = this.isPreviewLocked ? '🔒' : '🔓';
-        const lockStatus = this.isPreviewLocked ? '开启实时预览状态' : '关闭实时预览状态';
-        this.lockButton.innerHTML = lockIcon;
-        this.lockButton.setAttribute('aria-label', lockStatus);
-        
-        if (!this.isPreviewLocked) {
-            await this.updatePreview();
-        }
-    }
-
     async onFileModify(file: TFile) {
         if (file === this.currentFile && !this.isPreviewLocked) {
             if (this.updateTimer) {

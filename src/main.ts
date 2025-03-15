@@ -49,11 +49,6 @@ export default class RedPlugin extends Plugin {
             }
         });
     }
-
-    async onunload() {
-        // 清理视图
-        this.app.workspace.detachLeavesOfType(VIEW_TYPE_RED);  // 使用原来的视图类型
-    }
     
     async activateView() {
         // 如果视图已经存在，激活它
