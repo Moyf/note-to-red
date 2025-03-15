@@ -19,47 +19,59 @@ export class DownloadManager {
         try {
             const zip = new JSZip();
             const previewContainer = element.querySelector('.red-preview-container');
-            if (!previewContainer) {
-                throw new Error('找不到预览容器');
-            }
-
-            const sections = previewContainer.querySelectorAll('.red-content-section');
+            if (!previewContainer) throw new Error('找不到预览容器');
+    
+            // 定义 CSS 类名常量
+            const VISIBLE_CLASS = 'red-section-visible';
+            const HIDDEN_CLASS = 'red-section-hidden';
+            
+            const sections = previewContainer.querySelectorAll<HTMLElement>('.red-content-section');
             const totalSections = sections.length;
-            const originalDisplayStates = Array.from(sections).map(
-                s => (s as HTMLElement).style.display
-            );
-
+    
+            // 保存原始可见状态（基于类名）
+            const originalVisibility = Array.from(sections).map(section => ({
+                visible: section.classList.contains(VISIBLE_CLASS),
+                hidden: section.classList.contains(HIDDEN_CLASS)
+            }));
+    
             for (let i = 0; i < totalSections; i++) {
-                sections.forEach(s => (s as HTMLElement).style.display = 'none');
-                (sections[i] as HTMLElement).style.display = 'block';
-
-                const imageElement = element.querySelector('.red-image-preview') as HTMLElement;
+                // 使用 classList API 批量操作
+                sections.forEach(section => {
+                    section.classList.add(HIDDEN_CLASS);
+                    section.classList.remove(VISIBLE_CLASS);
+                });
+                
+                sections[i].classList.remove(HIDDEN_CLASS);
+                sections[i].classList.add(VISIBLE_CLASS);
+    
+                // 确保浏览器完成重绘
+                await new Promise(resolve => requestAnimationFrame(resolve));
+    
+                const imageElement = element.querySelector<HTMLElement>('.red-image-preview')!;
                 const blob = await domtoimage.toBlob(imageElement, this.getExportConfig(imageElement));
                 zip.file(`小红书笔记_第${i + 1}页.png`, blob);
             }
-
-            // 恢复所有 sections 的原始显示状态
-            sections.forEach((s, index) => {
-                (s as HTMLElement).style.display = originalDisplayStates[index];
+    
+            // 恢复原始类名状态
+            sections.forEach((section, index) => {
+                section.classList.toggle(VISIBLE_CLASS, originalVisibility[index].visible);
+                section.classList.toggle(HIDDEN_CLASS, originalVisibility[index].hidden);
             });
-
-            // 生成 zip 文件并下载
+    
+            // 创建虚拟点击（使用现代浏览器 API）
             const content = await zip.generateAsync({ type: "blob" });
-            const url = URL.createObjectURL(content);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `小红书笔记_${new Date().getTime()}.zip`;
-
-            document.body.appendChild(link);
+            const link = Object.assign(document.createElement('a'), {
+                href: URL.createObjectURL(content),
+                download: `小红书笔记_${Date.now()}.zip`
+            });
             link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-
+            URL.revokeObjectURL(link.href);
+    
         } catch (error) {
             console.error('导出图片失败:', error);
             throw error;
         }
-    }
+    }    
 
     static async downloadSingleImage(element: HTMLElement): Promise<void> {
         try {

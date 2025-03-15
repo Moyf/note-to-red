@@ -602,6 +602,14 @@
     display: block;
 }
 
+.red-section-visible {
+     display: block !important; 
+}
+
+.red-section-hidden {
+     display: none !important; 
+}
+
 /* 空状态提示 */
 .red-empty-message {
     text-align: center;
