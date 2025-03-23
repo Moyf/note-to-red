@@ -9,6 +9,7 @@ const oceanTemplate = require('./ocean.json');
 const sakuraTemplate = require('./sakura.json');
 const starryTemplate = require('./starry.json');
 const metalTemplate = require('./metal.json');
+const yuelingTemplate = require('./yueling.json');
 
 export const templates = {
     default: defaultTemplate,
@@ -20,5 +21,6 @@ export const templates = {
     ocean: oceanTemplate,
     sakura: sakuraTemplate,
     starry: starryTemplate,
-    metal: metalTemplate
+    metal: metalTemplate,
+    yueling: yuelingTemplate
 };
