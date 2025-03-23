@@ -144,12 +144,12 @@ export class PreviewManager {
         indicator: HTMLElement;
     }) {
         sections.forEach((section, i) => {
-            (section as HTMLElement).style.display = i === index ? 'block' : 'none';
+            (section as HTMLElement).classList.toggle('red-section-active', i === index);
         });
 
         if (navigationButtons) {
-            navigationButtons.prev.style.visibility = index === 0 ? 'hidden' : 'visible';
-            navigationButtons.next.style.visibility = index === sections.length - 1 ? 'hidden' : 'visible';
+            navigationButtons.prev.classList.toggle('red-nav-hidden', index === 0);
+            navigationButtons.next.classList.toggle('red-nav-hidden', index === sections.length - 1);
             navigationButtons.indicator.textContent = `${index + 1}/${sections.length}`;
         }
     }

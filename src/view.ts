@@ -54,6 +54,7 @@ export class RedView extends ItemView {
     async onOpen() {
         const container = this.containerEl.children[1];
         container.empty();
+        container.className = 'red-view-content';
         
         const toolbar = container.createEl('div', { cls: 'red-toolbar' });
 
@@ -376,7 +377,7 @@ export class RedView extends ItemView {
         if (!file || file.extension !== 'md') {
             this.previewEl.empty();
             this.previewEl.createEl('div', {
-                text: '只能预览 Markdown 文本文档',
+                text: '只能预览 markdown 文本文档',
                 cls: 'red-empty-state'
             });
             this.updateControlsState(false);
@@ -403,10 +404,11 @@ export class RedView extends ItemView {
     async updatePreview() {
         if (!this.currentFile) return;
         this.previewEl.empty();
-        const content = await this.app.vault.read(this.currentFile);
+        const content = await this.app.vault.cachedRead(this.currentFile);
         
         // 渲染 Markdown 内容
-        await MarkdownRenderer.renderMarkdown(
+        await MarkdownRenderer.render(
+            this.app,
             content,
             this.previewEl,
             this.currentFile.path,

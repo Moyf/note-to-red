@@ -1,5 +1,7 @@
 
 import { App, Plugin } from 'obsidian';
+import { DONATE_QR_BASE64 } from './assets/donateQR';
+import { MP_QR_BASE64 } from './assets/mpQR';
 
 export class DonateManager {
     private static overlay: HTMLElement;
@@ -102,7 +104,7 @@ export class DonateManager {
         });
         donateQR.createEl('img', {
             attr: {
-                src: this.app.vault.adapter.getResourcePath(`${this.plugin.manifest.dir}/assets/donate.png`),
+                src: DONATE_QR_BASE64,
                 alt: '打赏二维码'
             }
         });
@@ -129,7 +131,7 @@ export class DonateManager {
         });
         mpQR.createEl('img', {
             attr: {
-                src: this.app.vault.adapter.getResourcePath(`${this.plugin.manifest.dir}/assets/qrcode.png`),
+                src: MP_QR_BASE64,
                 alt: '公众号二维码'
             }
         });

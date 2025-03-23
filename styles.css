@@ -1,6 +1,8 @@
 /* 状态栏样式覆盖 */
-.workspace-leaf-content .view-content {
-    padding: 10px 10px 13px 10px;
+.red-view-content {
+    height: 100%;
+    padding: 10px 10px 0 10px;
+    overflow: auto;
 }
 
 /* 工具栏基础样式 */
@@ -602,14 +604,6 @@
     display: block;
 }
 
-.red-section-visible {
-     display: block !important; 
-}
-
-.red-section-hidden {
-     display: none !important; 
-}
-
 /* 空状态提示 */
 .red-empty-message {
     text-align: center;
@@ -817,4 +811,16 @@
 /* 代码块容器样式 */
 .red-pre {
     padding-top: 32px;
+}
+
+.red-section-active {
+    display: block;
+}
+
+.red-preview-container section:not(.red-section-active) {
+    display: none;
+}
+
+.red-nav-hidden {
+    visibility: hidden;
 }

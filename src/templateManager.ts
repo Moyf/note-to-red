@@ -306,14 +306,11 @@ export class TemplateManager {
 
         // 应用图片样式
         element.querySelectorAll('img').forEach(el => {
-            const img = el as HTMLImageElement;
-            el.setAttribute('style', `${styles.image}; font-family: ${this.currentFont};`);
-
-            const parent = img.parentElement;
+            el.setAttribute('style', styles.image);
+            const parent = el.parentElement;
             if (parent && parent.tagName.toLowerCase() === 'p') {
                 if (parent.childNodes.length === 1) {
-                    parent.style.textAlign = 'center';
-                    parent.style.margin = '1em 0';
+                    parent.classList.add('red-image-container');
                 }
             }
         });
