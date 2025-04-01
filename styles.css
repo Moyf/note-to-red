@@ -808,3 +808,11 @@
 .red-nav-hidden {
     visibility: hidden;
 }
+
+.red-section-visible {
+    display: block !important; 
+}
+
+.red-section-hidden {
+    display: none !important; 
+}

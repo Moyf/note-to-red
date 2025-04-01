@@ -10,7 +10,7 @@ export const VIEW_TYPE_RED = 'note-to-red';
 export class RedView extends ItemView {
     private previewEl: HTMLElement;
     private currentFile: TFile | null = null;
-    private updateTimer: NodeJS.Timeout | null = null;
+    private updateTimer: number | null = null;
     private isPreviewLocked: boolean = false;
     private lockButton: HTMLButtonElement;
     private copyButton: HTMLButtonElement;
@@ -392,10 +392,10 @@ export class RedView extends ItemView {
     async onFileModify(file: TFile) {
         if (file === this.currentFile && !this.isPreviewLocked) {
             if (this.updateTimer) {
-                clearTimeout(this.updateTimer);
+                window.clearTimeout(this.updateTimer);
             }
             
-            this.updateTimer = setTimeout(() => {
+            this.updateTimer = window.setTimeout(() => {
                 this.updatePreview();
             }, 500);
         }
