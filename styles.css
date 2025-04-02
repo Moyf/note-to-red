@@ -6,70 +6,100 @@
     background: var(--background-primary);
 }
 
-/* 工具栏基础样式 */
+/* ===== 工具栏 ===== */
 .red-toolbar, .red-bottom-bar {
-    padding: 20px 32px;
-    position: sticky;
-    border-radius: 6px;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    min-width: 680px;
+    padding: 15px 0;
+    max-width: 580px;
 }
 
 .red-toolbar {
     top: 0;
-    background: var(--background-primary);
-    border-bottom: 1px solid var(--background-modifier-border);
+    border-radius: 8px;
+    border-bottom: 2px solid var(--background-modifier-border);
 }
 
 .red-bottom-bar {
     bottom: 0;
-    background: var(--background-primary);
-    border-top: 1px solid var(--background-modifier-border);
+    border-radius: 8px;
+    border-top: 2px solid var(--background-modifier-border);
 }
 
 /* 控件组布局 */
-.red-controls-group, .red-bottom-controls-group {
+.red-controls-group {
     display: flex;
     gap: 12px;
     align-items: center;
-    margin: 0 auto;
-    width: fit-content;
-    min-width: fit-content;
-    margin-left: 40px;
+    width: 100%;
+    justify-content: flex-start;  /* 改为靠左对齐 */
+    flex-wrap: nowrap;
+    min-width: 0;
 }
 
-/* 锁定按钮 */
-.red-lock-button {
-    width: 32px;
-    height: 32px;
-    border: 1px solid var(--background-modifier-border);
+/* ===== 按钮基础样式 ===== */
+.red-controls-group button {
+    height: 36px;
     border-radius: 8px;
+    border: 1px solid var(--background-modifier-border);
     background: var(--background-primary);
-    color: var(--text-muted);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    font-size: 16px;
+    color: var(--text-normal);
+    font-size: 14px;
+    box-shadow: 0 1px 3px var(--background-modifier-box-shadow);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
-.red-lock-button:hover {
-    background: var(--background-primary-alt);
-    border-color: var(--interactive-accent);
-    color: var(--interactive-accent);
+/* 按钮文本样式 */
+.red-controls-group button span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
 }
 
-/* 下拉选择器 */
+.red-controls-group button:hover {
+    background: var(--background-modifier-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--background-modifier-box-shadow);
+}
+
+.red-controls-group button:disabled {
+    opacity: 0.5;
+    background: var(--background-primary) !important;
+    color: var(--text-muted) !important;
+    cursor: not-allowed !important;
+    transform: none;
+    border-color: var(--background-modifier-border) !important;
+    box-shadow: none;
+}
+
+/* 特殊按钮样式 */
+.red-controls-group .red-lock-button,
+.red-controls-group .red-help-button {
+    width: 36px;
+    margin: 0 20px 0 10px;
+    flex: none ;
+}
+
+.red-controls-group .red-export-button {
+    background-color: var(--text-accent);
+    color: var(--text-on-accent);
+    border: none;
+}
+.red-controls-group .red-export-button:hover {
+    color: var(--text-on-accent);
+    background-color: var(--text-accent);
+}
+
+/* ===== 下拉选择器 ===== */
 .red-select-container {
     position: relative;
-    width: 160px;
+    max-width: 200px;
+    flex: 1;
 }
 
 .red-select {
-    height: 32px;
+    height: 36px;
     padding: 0 12px;
     border: 1px solid var(--background-modifier-border);
     border-radius: 8px;
@@ -81,24 +111,37 @@
     user-select: none;
     transition: all 0.2s ease;
     color: var(--text-normal);
+    box-shadow: 0 1px 3px var(--background-modifier-box-shadow);
+    white-space: nowrap;
+    overflow: hidden;
 }
-
+.red-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+}
 .red-select:hover {
-    background: var(--background-primary-alt);
+    background: var(--background-modifier-hover);
+    box-shadow: 0 2px 6px var(--background-modifier-box-shadow);
 }
 
 .red-select.disabled {
     opacity: 0.5;
-    background: var(--background-primary-alt) !important;
+    background: var(--background-secondary) !important;
     color: var(--text-muted) !important;
     border-color: var(--background-modifier-border) !important;
     cursor: not-allowed;
+    box-shadow: none;
 }
 
 .red-select-arrow {
-    color: var(--text-muted);
+    color: var(--text-normal);
     font-size: 12px;
     transition: transform 0.2s ease;
+    margin-left: 4px;
+    flex-shrink: 0;
 }
 
 .red-select-dropdown {
@@ -109,6 +152,7 @@
     background: var(--background-primary);
     border: 1px solid var(--background-modifier-border);
     border-radius: 8px;
+    box-shadow: 0 4px 12px var(--background-modifier-box-shadow);
     display: none;
     z-index: 1000;
     overflow: hidden;
@@ -126,60 +170,57 @@
 }
 
 .red-select-item:hover {
-    background: var(--background-primary-alt);
-    color: var(--text-accent);
+    background: var(--background-modifier-hover);
 }
 
 .red-select-item.red-selected {
-    background-color: var(--background-primary-alt);
+    background: var(--background-modifier-hover);
     color: var(--text-accent);
 }
 
-/* 字号调整组件 */
+/* ===== 字号调整组件 ===== */
 .red-font-size-group {
-    width: 120px;
-    flex-shrink: 0;
+    height: 36px;
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 32px;
+
     background: var(--background-primary);
     border: 1px solid var(--background-modifier-border);
     border-radius: 8px;
     padding: 0;
     overflow: hidden;
-}
-
-.red-font-size-btn {
-    width: 55px;
-    height: 32px;
-    border: none;
-    background: var(--background-primary);
-    color: var(--text-normal);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    font-size: 16px;
-}
-
-.red-font-size-btn:hover {
-    background: var(--background-primary-alt);
+    box-shadow: 0 1px 3px var(--background-modifier-box-shadow);
 }
 
 .red-font-size-input {
-    width: 40px;
+    width: 50px;
     text-align: center;
-    font-size: 16px;
-    padding: 0;
-    margin: 0;
-    border: none;
-    background: transparent;
-    color: var(--text-normal);
-    outline: none;
 }
 
+/* ===== 帮助提示 ===== */
+.red-help-tooltip {
+    position: absolute;
+    left: 30px;
+    bottom: 80px;
+    width: 450px;
+    padding: 12px 16px;
+    background: var(--background-primary);
+    border: 2px solid var(--background-modifier-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--background-modifier-box-shadow);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-normal);
+    display: none;
+    white-space: pre-line;
+    z-index: 1000;
+}
+
+.red-help-button:hover + .red-help-tooltip {
+    display: block;
+}
 /* 预览区域 */
 .red-preview-wrapper {
     padding: 10px 20px 20px 20px;
@@ -202,98 +243,6 @@
     font-size: 16px;
 }
 
-/* 帮助按钮 */
-.red-help-button {
-    width: 32px;
-    height: 32px;
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 8px;
-    background: var(--background-primary);
-    color: var(--text-muted);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    font-size: 16px;
-}
-
-.red-help-button:hover {
-    background: var(--background-primary-alt);
-    border-color: var(--interactive-accent);
-    color: var(--interactive-accent);
-}
-
-/* 提示框位置调整 */
-.red-help-tooltip {
-    position: absolute;
-    left: 32px;
-    bottom: 48px;
-    width: 450px;
-    padding: 12px 16px;
-    background: var(--background-primary);
-    border: 2px solid var(--background-modifier-border);
-    border-radius: 8px;
-    font-size: 13px;
-    line-height: 1.6;
-    color: var(--text-normal);
-    display: none;
-    white-space: pre-line;
-    z-index: 1000;
-}
-
-.red-help-button:hover + .red-help-tooltip {
-    display: block;
-}
-
-/* 底部按钮 */
-.red-bottom-controls-group button {
-    padding: 8px 24px;
-    width: 120px;
-    height: 36px;
-    border-radius: 8px;
-    border: 1px solid var(--background-modifier-border);
-    background: var(--background-primary);
-    color: var(--text-normal);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-}
-
-.red-bottom-controls-group button:hover {
-    background: var(--background-primary-alt);
-}
-
-.red-export-button:not(:disabled) {
-    background: var(--interactive-accent) !important;
-    color: var(--text-on-accent) !important;
-    border: none !important;
-}
-
-.red-export-button:not(:disabled):hover {
-    background: var(--interactive-accent-hover) !important;
-}
-
-.red-feature-button {
-    opacity: 0.5;
-    border-color: var(--background-modifier-border) !important;
-    background: var(--background-primary) !important;
-    color: var(--text-muted) !important;
-    cursor: not-allowed !important;
-}
-
-.red-bottom-controls-group button:disabled {
-    opacity: 0.5;
-    background: var(--background-primary) !important;
-    color: var(--text-muted) !important;
-    cursor: not-allowed !important;
-    transform: none;
-    border-color: var(--background-modifier-border) !important;
-}
 
 /* 关于作者的框 */
 .red-about-overlay {
@@ -501,7 +450,7 @@
 /* 小红书预览容器 */
 .red-preview-container {
     position: relative;
-    width: 100%;
+    min-width: 600px;
     height: 100%;
     display: flex;
     justify-content: center;

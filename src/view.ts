@@ -58,17 +58,16 @@ export class RedView extends ItemView {
         
         const toolbar = container.createEl('div', { cls: 'red-toolbar' });
 
+        // 创建中间控件容器
+        const controlsGroup = toolbar.createEl('div', { cls: 'red-controls-group' });
+
         // 锁定按钮
-        this.lockButton = toolbar.createEl('button', {
+        this.lockButton = controlsGroup.createEl('button', {
             cls: 'red-lock-button',
             text: '🔓',
             attr: { 'aria-label': '关闭实时预览状态' }
         });
         this.lockButton.addEventListener('click', () => this.togglePreviewLock());
-    
-        // 创建中间控件容器
-        const controlsGroup = toolbar.createEl('div', { cls: 'red-controls-group' });
-        
         // 创建自定义下拉选择器
         this.customTemplateSelect = this.createCustomSelect(
             controlsGroup,
@@ -212,16 +211,18 @@ export class RedView extends ItemView {
 
         // 底部工具栏
         const bottomBar = container.createEl('div', { cls: 'red-bottom-bar' });
+        // 创建中间控件容器
+        const bottomControlsGroup = bottomBar.createEl('div', { cls: 'red-controls-group' });
 
         // 帮助按钮
-        const helpButton = bottomBar.createEl('button', {
+        bottomControlsGroup.createEl('button', {
             cls: 'red-help-button',
             text: '❓',
             attr: { 'aria-label': '使用指南' }
         });
         
         // 更新帮助文本
-        const tooltip = bottomBar.createEl('div', {
+        bottomControlsGroup.createEl('div', {
             cls: 'red-help-tooltip',
             text: `使用指南：
                 1. 核心用法：用二级标题(##)分割内容，每个标题生成一张小红书配图
@@ -233,14 +234,11 @@ export class RedView extends ItemView {
                 7. 支持创作：点击❤️关于作者可进行打赏支持`
         });
 
-        // 创建中间控件容器
-        const bottomControlsGroup = bottomBar.createEl('div', { cls: 'red-bottom-controls-group' });
-        
         // 请作者喝咖啡按钮
         const likeButton = bottomControlsGroup.createEl('button', { 
             cls: 'red-like-button'
         });
-        const heartSpan = likeButton.createEl('span', {
+        likeButton.createEl('span', {
             text: '❤️',
             attr: { style: 'margin-right: 4px' }
         });
@@ -306,11 +304,6 @@ export class RedView extends ItemView {
                     }, 2000);
                 }
             }
-        });
-
-        const newButton = bottomControlsGroup.createEl('button', { 
-            text: '敬请期待',
-            cls: 'red-feature-button'
         });
 
         // 监听文档变化
