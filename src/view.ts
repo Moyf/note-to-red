@@ -1,10 +1,11 @@
-import { ItemView, WorkspaceLeaf, MarkdownRenderer, TFile } from 'obsidian';
+import { ItemView, WorkspaceLeaf, MarkdownRenderer, TFile, Notice } from 'obsidian';
 import { RedConverter } from './converter';
 import { DownloadManager } from './downloadManager';
 import type { TemplateManager } from './templateManager';
 import { DonateManager } from './donateManager';
 import type { SettingsManager } from './settings';
 import { PreviewManager } from './previewManager';
+import { ClipboardManager } from './clipboardManager';
 export const VIEW_TYPE_RED = 'note-to-red';
 
 export class RedView extends ItemView {
@@ -29,7 +30,7 @@ export class RedView extends ItemView {
     private previewManager: PreviewManager;
 
     constructor(
-        leaf: WorkspaceLeaf, 
+        leaf: WorkspaceLeaf,
         templateManager: TemplateManager,
         settingsManager: SettingsManager
     ) {
@@ -48,14 +49,14 @@ export class RedView extends ItemView {
     }
 
     getIcon() {
-       return 'image';
+        return 'image';
     }
 
     async onOpen() {
         const container = this.containerEl.children[1];
         container.empty();
         container.className = 'red-view-content';
-        
+
         const toolbar = container.createEl('div', { cls: 'red-toolbar' });
 
         // 创建中间控件容器
@@ -75,7 +76,7 @@ export class RedView extends ItemView {
             await this.getTemplateOptions()
         );
         this.customTemplateSelect.id = 'template-select';
-        
+
         // 添加模板选择器的 change 事件监听
         this.customTemplateSelect.querySelector('.red-select')?.addEventListener('change', async (e: any) => {
             const value = e.detail.value;
@@ -85,7 +86,7 @@ export class RedView extends ItemView {
             });
             this.templateManager.applyTemplate(this.previewEl);
         });
-    
+
         this.customFontSelect = this.createCustomSelect(
             controlsGroup,
             'red-font-select',
@@ -105,11 +106,11 @@ export class RedView extends ItemView {
 
         // 字号调整
         const fontSizeGroup = controlsGroup.createEl('div', { cls: 'red-font-size-group' });
-        const decreaseButton = fontSizeGroup.createEl('button', { 
+        const decreaseButton = fontSizeGroup.createEl('button', {
             cls: 'red-font-size-btn',
             text: '-'
         });
-        this.fontSizeSelect = fontSizeGroup.createEl('input', { 
+        this.fontSizeSelect = fontSizeGroup.createEl('input', {
             cls: 'red-font-size-input',
             type: 'text',
             value: '16',
@@ -117,7 +118,7 @@ export class RedView extends ItemView {
                 style: 'border: none; outline: none; background: transparent;'
             }
         });
-        const increaseButton = fontSizeGroup.createEl('button', { 
+        const increaseButton = fontSizeGroup.createEl('button', {
             cls: 'red-font-size-btn',
             text: '+'
         });
@@ -220,7 +221,7 @@ export class RedView extends ItemView {
             text: '❓',
             attr: { 'aria-label': '使用指南' }
         });
-        
+
         // 更新帮助文本
         bottomControlsGroup.createEl('div', {
             cls: 'red-help-tooltip',
@@ -235,7 +236,7 @@ export class RedView extends ItemView {
         });
 
         // 请作者喝咖啡按钮
-        const likeButton = bottomControlsGroup.createEl('button', { 
+        const likeButton = bottomControlsGroup.createEl('button', {
             cls: 'red-like-button'
         });
         likeButton.createEl('span', {
@@ -257,11 +258,11 @@ export class RedView extends ItemView {
             if (this.previewEl) {
                 singleDownloadButton.disabled = true;
                 singleDownloadButton.setText('导出中...');
-                
+
                 try {
                     await DownloadManager.downloadSingleImage(this.previewEl);
                     singleDownloadButton.setText('导出成功');
-                    
+
                     setTimeout(() => {
                         singleDownloadButton.disabled = false;
                         singleDownloadButton.setText('下载当前页');
@@ -277,21 +278,21 @@ export class RedView extends ItemView {
         });
 
         // 更新按钮文本和类名
-        this.copyButton = bottomControlsGroup.createEl('button', { 
+        this.copyButton = bottomControlsGroup.createEl('button', {
             text: '导出全部页',
             cls: 'red-export-button'
         });
-        
+
         // 添加导出按钮点击事件
         this.copyButton.addEventListener('click', async () => {
             if (this.previewEl) {
                 this.copyButton.disabled = true;
                 this.copyButton.setText('导出中...');
-                
+
                 try {
                     await DownloadManager.downloadAllImages(this.previewEl);
                     this.copyButton.setText('导出成功');
-                    
+
                     setTimeout(() => {
                         this.copyButton.disabled = false;
                         this.copyButton.setText('导出全部页');
@@ -315,15 +316,41 @@ export class RedView extends ItemView {
         this.registerEvent(
             this.app.vault.on('modify', this.onFileModify.bind(this))
         );
-
         // 检查当前打开的文件
         const currentFile = this.app.workspace.getActiveFile();
         await this.onFileOpen(currentFile);
+        
+        // 监听复制按钮添加事件
+        this.containerEl.addEventListener('copy-button-added', ((e: CustomEvent) => {
+            const { copyButton } = e.detail;
+            if (copyButton) {
+                copyButton.addEventListener('click', async () => {
+                    copyButton.disabled = true;
+                    
+                    try {
+                        await ClipboardManager.copyImageToClipboard(this.previewEl);
+                        new Notice('图片已复制到剪贴板');
+                    } catch (error) {
+                        new Notice('复制失败');
+                        console.error('复制图片失败:', error);
+                    }
+
+                    setTimeout(() => {
+                        copyButton.disabled = false;
+                    }, 1000);
+                });
+            }
+        }) as EventListener);
+        
+        // 确保在组件卸载时移除事件监听
+        this.register(() => {
+            this.containerEl.removeEventListener('copy-button-added', ((e: CustomEvent) => {}) as EventListener);
+        });
     }
 
     private updateControlsState(enabled: boolean) {
         this.lockButton.disabled = !enabled;
-        
+
         // 更新自定义选择器的禁用状态
         const templateSelect = this.customTemplateSelect.querySelector('.red-select');
         const fontSelect = this.customFontSelect.querySelector('.red-select');
@@ -335,14 +362,14 @@ export class RedView extends ItemView {
             fontSelect.classList.toggle('disabled', !enabled);
             fontSelect.setAttribute('style', `pointer-events: ${enabled ? 'auto' : 'none'}`);
         }
-        
+
         // 字号相关控件
         this.fontSizeSelect.disabled = !enabled;
         const fontSizeButtons = this.containerEl.querySelectorAll('.red-font-size-btn');
         fontSizeButtons.forEach(button => {
             (button as HTMLButtonElement).disabled = !enabled;
         });
-        
+
         // 导出按钮
         this.copyButton.disabled = !enabled;
         const singleDownloadButton = this.containerEl.querySelector('.red-export-button');
@@ -357,7 +384,7 @@ export class RedView extends ItemView {
         const lockStatus = this.isPreviewLocked ? '开启实时预览状态' : '关闭实时预览状态';
         this.lockButton.setText(lockIcon);
         this.lockButton.setAttribute('aria-label', lockStatus);
-        
+
         if (!this.isPreviewLocked) {
             await this.updatePreview();
         }
@@ -366,7 +393,7 @@ export class RedView extends ItemView {
     async onFileOpen(file: TFile | null) {
         this.currentFile = file;
         this.currentImageIndex = 0;  // 重置图片索引
-        
+
         if (!file || file.extension !== 'md') {
             this.previewEl.empty();
             this.previewEl.createEl('div', {
@@ -387,7 +414,7 @@ export class RedView extends ItemView {
             if (this.updateTimer) {
                 window.clearTimeout(this.updateTimer);
             }
-            
+
             this.updateTimer = window.setTimeout(() => {
                 this.updatePreview();
             }, 500);
@@ -398,7 +425,7 @@ export class RedView extends ItemView {
         if (!this.currentFile) return;
         this.previewEl.empty();
         const content = await this.app.vault.cachedRead(this.currentFile);
-        
+
         // 渲染 Markdown 内容
         await MarkdownRenderer.render(
             this.app,
@@ -411,7 +438,7 @@ export class RedView extends ItemView {
         // 转换内容并检查有效性
         RedConverter.formatContent(this.previewEl);
         const hasValidContent = RedConverter.hasValidContent(this.previewEl);
-        
+
         // 更新所有控件状态
         this.updateControlsState(hasValidContent);
         if (!hasValidContent) {
@@ -449,7 +476,7 @@ export class RedView extends ItemView {
 
         // 创建导航按钮
         const navButtons = this.previewManager.createNavigationButtons(
-            this.previewEl, 
+            this.previewEl,
             sections.length,
             (direction) => this.navigateImages(direction)
         );
@@ -465,7 +492,7 @@ export class RedView extends ItemView {
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = 'image/*';
-        
+
         input.addEventListener('change', async () => {
             const file = input.files?.[0];
             if (file) {
@@ -561,8 +588,8 @@ export class RedView extends ItemView {
         const handleBlur = async () => {
             const newText = input.value.trim();
             await this.settingsManager.updateSettings({
-                [`footer${position === 'left' ? 'Left' : 'Right'}Text`]: newText || 
-                (position === 'left' ? '夜半过后，光明便启程' : '欢迎关注公众号：夜半')
+                [`footer${position === 'left' ? 'Left' : 'Right'}Text`]: newText ||
+                    (position === 'left' ? '夜半过后，光明便启程' : '欢迎关注公众号：夜半')
             });
             await this.updatePreview();
             input.remove();
@@ -597,18 +624,18 @@ export class RedView extends ItemView {
         const select = container.createEl('div', { cls: 'red-select' });
         const selectedText = select.createEl('span', { cls: 'red-select-text' });
         const arrow = select.createEl('span', { cls: 'red-select-arrow', text: '▾' });
-        
+
         const dropdown = container.createEl('div', { cls: 'red-select-dropdown' });
-        
+
         options.forEach(option => {
             const item = dropdown.createEl('div', {
                 cls: 'red-select-item',
                 text: option.label
             });
-            
+
             item.dataset.value = option.value;
             item.addEventListener('click', () => {
-                dropdown.querySelectorAll('.red-select-item').forEach(el => 
+                dropdown.querySelectorAll('.red-select-item').forEach(el =>
                     el.classList.remove('red-selected'));
                 item.classList.add('red-selected');
                 selectedText.textContent = option.label;
@@ -619,25 +646,25 @@ export class RedView extends ItemView {
                 }));
             });
         });
-        
+
         // 设置默认值和选中状态
         if (options.length > 0) {
             selectedText.textContent = options[0].label;
             select.dataset.value = options[0].value;
             dropdown.querySelector('.red-select-item')?.classList.add('red-selected');
         }
-        
+
         // 点击显示/隐藏下拉列表
         select.addEventListener('click', (e) => {
             e.stopPropagation();
             dropdown.classList.toggle('red-show');
         });
-        
+
         // 点击其他地方关闭下拉列表
         document.addEventListener('click', () => {
             dropdown.classList.remove('red-show');
         });
-        
+
         return container;
     }
 
@@ -645,7 +672,7 @@ export class RedView extends ItemView {
     private async getTemplateOptions() {
         await this.templateManager.loadTemplates();
         const templates = this.templateManager.getAllTemplates();
-        
+
         return templates.length > 0
             ? templates.map(t => ({ value: t.id, label: t.name }))
             : [{ value: 'default', label: '默认模板' }];
@@ -654,23 +681,23 @@ export class RedView extends ItemView {
     // 获取字体选项
     private getFontOptions() {
         return [
-            { 
+            {
                 value: 'Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, "PingFang SC", Cambria, Cochin, Georgia, Times, "Times New Roman", serif',
                 label: '默认字体'
             },
-            { 
+            {
                 value: 'SimSun, "宋体", serif',
                 label: '宋体'
             },
-            { 
+            {
                 value: 'SimHei, "黑体", sans-serif',
                 label: '黑体'
             },
-            { 
+            {
                 value: 'KaiTi, "楷体", serif',
                 label: '楷体'
             },
-            { 
+            {
                 value: '"Microsoft YaHei", "微软雅黑", sans-serif',
                 label: '雅黑'
             }
