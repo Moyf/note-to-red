@@ -1,7 +1,7 @@
 import { ItemView, WorkspaceLeaf, MarkdownRenderer, TFile, Notice } from 'obsidian';
 import { RedConverter } from './converter';
 import { DownloadManager } from './downloadManager';
-import type { TemplateManager } from './templateManager';
+import type { ThemeManager } from './themeManager';
 import { DonateManager } from './donateManager';
 import type { SettingsManager } from './settings';
 import { PreviewManager } from './previewManager';
@@ -15,7 +15,7 @@ export class RedView extends ItemView {
     private isPreviewLocked: boolean = false;
     private lockButton: HTMLButtonElement;
     private copyButton: HTMLButtonElement;
-    private templateManager: TemplateManager;
+    private themeManager: ThemeManager;
     private settingsManager: SettingsManager;
     private customTemplateSelect: HTMLElement;
     private customFontSelect: HTMLElement;
@@ -31,11 +31,11 @@ export class RedView extends ItemView {
 
     constructor(
         leaf: WorkspaceLeaf,
-        templateManager: TemplateManager,
+        themeManager: ThemeManager,
         settingsManager: SettingsManager
     ) {
         super(leaf);
-        this.templateManager = templateManager;
+        this.themeManager = themeManager;
         this.settingsManager = settingsManager;
         this.previewManager = new PreviewManager(settingsManager);
     }
@@ -80,11 +80,11 @@ export class RedView extends ItemView {
         // 添加模板选择器的 change 事件监听
         this.customTemplateSelect.querySelector('.red-select')?.addEventListener('change', async (e: any) => {
             const value = e.detail.value;
-            this.templateManager.setCurrentTemplate(value);
+            this.themeManager.setCurrentTheme(value);
             await this.settingsManager.updateSettings({
                 templateId: value
             });
-            this.templateManager.applyTemplate(this.previewEl);
+            this.themeManager.applyTheme(this.previewEl);
         });
 
         this.customFontSelect = this.createCustomSelect(
@@ -96,11 +96,11 @@ export class RedView extends ItemView {
         // 添加字体选择器的 change 事件监听
         this.customFontSelect.querySelector('.red-select')?.addEventListener('change', async (e: any) => {
             const value = e.detail.value;
-            this.templateManager.setFont(value);
+            this.themeManager.setFont(value);
             await this.settingsManager.updateSettings({
                 fontFamily: value
             });
-            this.templateManager.applyTemplate(this.previewEl);
+            this.themeManager.applyTheme(this.previewEl);
         });
         this.customFontSelect.id = 'font-select';
 
@@ -147,7 +147,7 @@ export class RedView extends ItemView {
                     });
                 }
             }
-            this.templateManager.setCurrentTemplate(settings.templateId);
+            this.themeManager.setCurrentTheme(settings.templateId);
         }
 
         if (settings.fontFamily) {
@@ -170,22 +170,22 @@ export class RedView extends ItemView {
                     });
                 }
             }
-            this.templateManager.setFont(settings.fontFamily);
+            this.themeManager.setFont(settings.fontFamily);
         }
 
         if (settings.fontSize) {
             this.fontSizeSelect.value = settings.fontSize.toString();
-            this.templateManager.setFontSize(settings.fontSize);
+            this.themeManager.setFontSize(settings.fontSize);
         }
 
         // 更新字号调整事件
         const updateFontSize = async () => {
             const size = parseInt(this.fontSizeSelect.value);
-            this.templateManager.setFontSize(size);
+            this.themeManager.setFontSize(size);
             await this.settingsManager.updateSettings({
                 fontSize: size
             });
-            this.templateManager.applyTemplate(this.previewEl);
+            this.themeManager.applyTheme(this.previewEl);
         };
 
         // 字号调整按钮事件
@@ -468,7 +468,7 @@ export class RedView extends ItemView {
         }
 
         // 应用模板和背景
-        this.templateManager.applyTemplate(this.previewEl);
+        this.themeManager.applyTheme(this.previewEl);
 
         // 获取所有内容区块
         const sections = this.previewEl.querySelectorAll('.red-content-section');
@@ -575,8 +575,6 @@ export class RedView extends ItemView {
         });
     }
 
-    // ... existing code ...
-
     private async handleFooterTextEdit(element: HTMLElement, position: 'left' | 'right') {
         const input = document.createElement('input');
         input.value = element.textContent || '';
@@ -670,8 +668,8 @@ export class RedView extends ItemView {
 
     // 获取模板选项
     private async getTemplateOptions() {
-        await this.templateManager.loadTemplates();
-        const templates = this.templateManager.getAllTemplates();
+        await this.themeManager.loadThemes();
+        const templates = this.themeManager.getAllThemes();
 
         return templates.length > 0
             ? templates.map(t => ({ value: t.id, label: t.name }))

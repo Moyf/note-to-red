@@ -1,6 +1,6 @@
 import { Plugin, Notice } from 'obsidian';
 import { RedView, VIEW_TYPE_RED } from './view';  // 暂时改回原来的导入
-import { TemplateManager } from './templateManager';
+import { ThemeManager } from './themeManager';
 import { SettingsManager } from './settings';
 import { RedConverter } from './converter';  // 暂时使用原来的转换器
 import { DonateManager } from './donateManager';
@@ -13,8 +13,8 @@ export default class RedPlugin extends Plugin {
         this.settingsManager = new SettingsManager(this);
         await this.settingsManager.loadSettings();
 
-        // 初始化模板管理器
-        const templateManager = new TemplateManager(this.app);
+        // 初始化主题管理器
+        const themeManager = new ThemeManager(this.app);
         
         // 初始化转换器
         RedConverter.initialize(this.app);
@@ -24,7 +24,7 @@ export default class RedPlugin extends Plugin {
         // 注册视图
         this.registerView(
             VIEW_TYPE_RED,
-            (leaf) => new RedView(leaf, templateManager, this.settingsManager)
+            (leaf) => new RedView(leaf, themeManager, this.settingsManager)
         );
 
         // 添加首次加载自动打开视图的逻辑

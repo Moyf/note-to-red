@@ -1,7 +1,7 @@
 import { App } from 'obsidian';
 import { templates } from './templates';
 
-interface Template {
+interface Theme {
     id: string;
     name: string;
     styles: {
@@ -79,52 +79,51 @@ interface Template {
     };
 }
 
-export class TemplateManager {
-    private templates: Map<string, Template> = new Map();
-    private currentTemplate: Template;
+export class ThemeManager {
+    private themes: Map<string, Theme> = new Map();
+    private currentTheme: Theme;
     private currentFont: string = '-apple-system';
     private currentFontSize: number = 16;
     private app: App;
 
     constructor(app: App) {
         this.app = app;
-        this.loadTemplates(); // 加载模板
+        this.loadThemes(); // 加载主题
     }
 
-    public async loadTemplates() {
+    public async loadThemes() {
         try {
-            // 直接从内置模板加载
-            Object.values(templates).forEach(template => {
-                this.templates.set(template.id, template);
-                if (template.id === 'default') {
-                    this.currentTemplate = template;
+            Object.values(templates).forEach(theme => {
+                this.themes.set(theme.id, theme);
+                if (theme.id === 'default') {
+                    this.currentTheme = theme;
                 }
             });
         } catch (error) {
-            console.error('加载模板失败:', error);
-            throw new Error('无法加载模板文件');
+            console.error('加载主题失败:', error);
+            throw new Error('无法加载主题文件');
         }
     }
 
-    public getTemplate(id: string): Template | undefined {
-        return this.templates.get(id);
+    public getTheme(id: string): Theme | undefined {
+        return this.themes.get(id);
     }
 
-    public getCurrentTemplate(): Template {
-        return this.currentTemplate;
+    public getCurrentTheme(): Theme {
+        return this.currentTheme;
     }
 
-    public setCurrentTemplate(id: string): boolean {
-        const template = this.templates.get(id);
-        if (template) {
-            this.currentTemplate = template;
+    public setCurrentTheme(id: string): boolean {
+        const theme = this.themes.get(id);
+        if (theme) {
+            this.currentTheme = theme;
             return true;
         }
         return false;
     }
 
-    public getAllTemplates(): Template[] {
-        return Array.from(this.templates.values());
+    public getAllThemes(): Theme[] {
+        return Array.from(this.themes.values());
     }
 
     public setFont(fontFamily: string) {
@@ -135,9 +134,9 @@ export class TemplateManager {
         this.currentFontSize = size;
     }
 
-    // 修改 applyTemplate 方法
-    public applyTemplate(element: HTMLElement): void {
-        const styles = this.currentTemplate.styles;
+    // 修改 applyTheme 方法
+    public applyTheme(element: HTMLElement): void {
+        const styles = this.currentTheme.styles;
         
         // 修改应用基础样式的方式
         const imagePreview = element.querySelector('.red-image-preview');
@@ -317,4 +316,4 @@ export class TemplateManager {
     }
 }
 
-export const templateManager = (app: App) => new TemplateManager(app);
+export const themeManager = (app: App) => new ThemeManager(app);
