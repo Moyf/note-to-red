@@ -44,7 +44,10 @@ export class RedView extends ItemView {
         super(leaf);
         this.themeManager = themeManager;
         this.settingsManager = settingsManager;
-        this.previewManager = new PreviewManager(settingsManager);
+        this.previewManager = new PreviewManager(
+            settingsManager,
+            async () => await this.updatePreview()
+        );
     }
 
     getViewType() {
@@ -87,7 +90,54 @@ export class RedView extends ItemView {
     }
 
     private initializePreviewArea(container: HTMLElement) {
-        this.previewEl = container.createEl('div', { cls: 'red-preview-wrapper' });
+        const wrapper = container.createEl('div', { cls: 'red-preview-wrapper' });
+        this.previewEl = wrapper.createEl('div', { cls: 'red-preview-container' });
+        
+        // 创建导航容器
+        const navContainer = wrapper.createEl('div', { cls: 'red-nav-container' });
+        
+        const prevButton = navContainer.createEl('button', {
+            cls: 'red-nav-button',
+            text: '←'
+        });
+
+        const indicator = navContainer.createEl('span', {
+            cls: 'red-page-indicator',
+            text: '1/1'
+        });
+
+        const nextButton = navContainer.createEl('button', {
+            cls: 'red-nav-button',
+            text: '→'
+        });
+
+        this.navigationButtons = { prev: prevButton, next: nextButton, indicator };
+        
+        prevButton.addEventListener('click', () => this.navigateImages('prev'));
+        nextButton.addEventListener('click', () => this.navigateImages('next'));
+    }
+
+    private updateNavigationState() {
+        const sections = this.previewEl.querySelectorAll('.red-content-section');
+        if (!this.navigationButtons) return;
+
+        sections.forEach((section, i) => {
+            (section as HTMLElement).classList.toggle('red-section-active', i === this.currentImageIndex);
+        });
+
+        this.navigationButtons.prev.classList.toggle('red-nav-hidden', this.currentImageIndex === 0);
+        this.navigationButtons.next.classList.toggle('red-nav-hidden', this.currentImageIndex === sections.length - 1);
+        this.navigationButtons.indicator.textContent = `${this.currentImageIndex + 1}/${sections.length}`;
+    }
+
+    private navigateImages(direction: 'prev' | 'next') {
+        const sections = this.previewEl.querySelectorAll('.red-content-section');
+        if (direction === 'prev' && this.currentImageIndex > 0) {
+            this.currentImageIndex--;
+        } else if (direction === 'next' && this.currentImageIndex < sections.length - 1) {
+            this.currentImageIndex++;
+        }
+        this.updateNavigationState();
     }
 
     private initializeBottomBar(container: HTMLElement) {
@@ -399,18 +449,8 @@ export class RedView extends ItemView {
     }
 
     private async updatePreviewContent() {
-        this.navigationButtons = await this.previewManager.updatePreviewContent(
-            this.previewEl,
-            this.themeManager,
-            this.currentImageIndex,
-            {
-                onAvatarClick: () => this.handleAvatarClick(),
-                onUserNameEdit: (el) => this.handleUserNameEdit(el),
-                onUserIdEdit: (el) => this.handleUserIdEdit(el),
-                onFooterTextEdit: (el, position) => this.handleFooterTextEdit(el, position),
-                onNavigate: (direction) => this.navigateImages(direction)
-            }
-        );
+        await this.previewManager.updatePreviewContent(this.previewEl, this.themeManager);
+        this.updateNavigationState();
     }
 
     private updateControlsState(enabled: boolean) {
@@ -594,17 +634,6 @@ export class RedView extends ItemView {
             }
         });
     }
-
-    private navigateImages(direction: 'prev' | 'next') {
-        const sections = this.previewEl.querySelectorAll('.red-content-section');
-        if (direction === 'prev' && this.currentImageIndex > 0) {
-            this.currentImageIndex--;
-        } else if (direction === 'next' && this.currentImageIndex < sections.length - 1) {
-            this.currentImageIndex++;
-        }
-        this.previewManager.showImage(this.currentImageIndex, sections, this.navigationButtons);
-    }
-    // #endregion
 
     // #region 工具方法
     private createCustomSelect(

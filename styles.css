@@ -516,15 +516,42 @@
 
 /* 导航容器 */
 .red-nav-container {
-    position: absolute;
-    bottom: 20px;
-    left: 0;
-    right: 0;
+    position: fixed;
+    bottom: 120px;  /* 调整位置避免与底部工具栏重叠 */
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 20px;
-    z-index: 10;
+    z-index: 100;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);  /* 半透明背景 */
+    backdrop-filter: blur(8px);  /* 毛玻璃效果 */
+    border-radius: 20px;
+}
+
+.red-nav-button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4px);
+}
+
+.red-nav-button:hover {
+    background: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* 内容区块样式 */
