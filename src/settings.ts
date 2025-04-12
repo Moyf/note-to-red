@@ -1,5 +1,6 @@
 interface RedSettings {
     templateId: string;
+    themeId: string;
     fontFamily: string;
     fontSize: number;
     backgroundId: string;
@@ -15,6 +16,7 @@ interface RedSettings {
 
 const DEFAULT_SETTINGS: RedSettings = {
     templateId: 'default',
+    themeId: 'light',
     fontFamily: 'Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, "PingFang SC"',
     fontSize: 16,
     backgroundId: '',

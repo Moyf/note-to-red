@@ -4,8 +4,8 @@ import { DownloadManager } from './downloadManager';
 import type { ThemeManager } from './themeManager';
 import { DonateManager } from './donateManager';
 import type { SettingsManager } from './settings';
-import { PreviewManager } from './previewManager';
 import { ClipboardManager } from './clipboardManager';
+import { ImgTemplateManager } from './imgTemplateManager';
 
 export const VIEW_TYPE_RED = 'note-to-red';
 
@@ -32,7 +32,7 @@ export class RedView extends ItemView {
     // 管理器实例
     private themeManager: ThemeManager;
     private settingsManager: SettingsManager;
-    private previewManager: PreviewManager;
+    private imgTemplateManager: ImgTemplateManager;
     // #endregion
 
     // #region 基础视图方法
@@ -44,9 +44,10 @@ export class RedView extends ItemView {
         super(leaf);
         this.themeManager = themeManager;
         this.settingsManager = settingsManager;
-        this.previewManager = new PreviewManager(
-            settingsManager,
-            async () => await this.updatePreview()
+        this.imgTemplateManager = new ImgTemplateManager(
+            this.settingsManager,
+            this.updatePreview.bind(this),
+            this.themeManager
         );
     }
 
@@ -83,6 +84,7 @@ export class RedView extends ItemView {
         const controlsGroup = toolbar.createEl('div', { cls: 'red-controls-group' });
 
         await this.initializeLockButton(controlsGroup);
+        await this.initializeTemplateSelect(controlsGroup);
         await this.initializeThemeSelect(controlsGroup);
         await this.initializeFontSelect(controlsGroup);
         await this.initializeFontSizeControls(controlsGroup);
@@ -170,7 +172,7 @@ export class RedView extends ItemView {
         this.lockButton.addEventListener('click', () => this.togglePreviewLock());
     }
 
-    private async initializeThemeSelect(parent: HTMLElement) {
+    private async initializeTemplateSelect(parent: HTMLElement) {
         this.customTemplateSelect = this.createCustomSelect(
             parent,
             'red-template-select',
@@ -180,8 +182,25 @@ export class RedView extends ItemView {
 
         this.customTemplateSelect.querySelector('.red-select')?.addEventListener('change', async (e: any) => {
             const value = e.detail.value;
-            this.themeManager.setCurrentTheme(value);
+            this.imgTemplateManager.setCurrentTemplate(value);
             await this.settingsManager.updateSettings({ templateId: value });
+            this.imgTemplateManager.applyTemplate(this.previewEl, this.settingsManager.getSettings());
+            await this.updatePreview();
+        });
+    }
+
+    private async initializeThemeSelect(parent: HTMLElement) {
+        this.customTemplateSelect = this.createCustomSelect(
+            parent,
+            'red-theme-select',
+            await this.getThemeOptions()
+        );
+        this.customTemplateSelect.id = 'theme-select';
+
+        this.customTemplateSelect.querySelector('.red-select')?.addEventListener('change', async (e: any) => {
+            const value = e.detail.value;
+            this.themeManager.setCurrentTheme(value);
+            await this.settingsManager.updateSettings({ themeId: value });
             this.themeManager.applyTheme(this.previewEl);
         });
     }
@@ -366,8 +385,8 @@ export class RedView extends ItemView {
     private async restoreSettings() {
         const settings = this.settingsManager.getSettings();
 
-        if (settings.templateId) {
-            await this.restoreThemeSettings(settings.templateId);
+        if (settings.themeId) {
+            await this.restoreThemeSettings(settings.themeId);
         }
         if (settings.fontFamily) {
             await this.restoreFontSettings(settings.fontFamily);
@@ -378,12 +397,12 @@ export class RedView extends ItemView {
         }
     }
 
-    private async restoreThemeSettings(templateId: string) {
+    private async restoreThemeSettings(themeId: string) {
         const templateSelect = this.customTemplateSelect.querySelector('.red-select-text');
         const templateDropdown = this.customTemplateSelect.querySelector('.red-select-dropdown');
         if (templateSelect && templateDropdown) {
-            const option = await this.getTemplateOptions();
-            const selected = option.find(o => o.value === templateId);
+            const option = await this.getThemeOptions();
+            const selected = option.find(o => o.value === themeId);
             if (selected) {
                 templateSelect.textContent = selected.label;
                 this.customTemplateSelect.querySelector('.red-select')?.setAttribute('data-value', selected.value);
@@ -396,7 +415,7 @@ export class RedView extends ItemView {
                 });
             }
         }
-        this.themeManager.setCurrentTheme(templateId);
+        this.themeManager.setCurrentTheme(themeId);
     }
 
     private async restoreFontSettings(fontFamily: string) {
@@ -438,18 +457,17 @@ export class RedView extends ItemView {
         RedConverter.formatContent(this.previewEl);
         const hasValidContent = RedConverter.hasValidContent(this.previewEl);
 
+        if (hasValidContent) {
+            // 应用当前模板
+            this.imgTemplateManager.applyTemplate(this.previewEl, this.settingsManager.getSettings());
+        }
+
         this.updateControlsState(hasValidContent);
         if (!hasValidContent) {
             this.copyButton.setAttribute('title', '请先添加二级标题内容');
         } else {
             this.copyButton.removeAttribute('title');
         }
-
-        await this.updatePreviewContent();
-    }
-
-    private async updatePreviewContent() {
-        await this.previewManager.updatePreviewContent(this.previewEl, this.themeManager);
         this.updateNavigationState();
     }
 
@@ -524,116 +542,6 @@ export class RedView extends ItemView {
             await this.updatePreview();
         }
     }
-    // #endregion
-
-    // #region 用户交互处理
-    private async handleAvatarClick() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-
-        input.addEventListener('change', async () => {
-            const file = input.files?.[0];
-            if (file) {
-                try {
-                    const reader = new FileReader();
-                    reader.onload = async (e) => {
-                        const base64 = e.target?.result as string;
-                        await this.settingsManager.updateSettings({
-                            userAvatar: base64
-                        });
-                        await this.updatePreview();
-                    };
-                    reader.readAsDataURL(file);
-                } catch (error) {
-                    console.error('头像更新失败:', error);
-                }
-            }
-        });
-
-        input.click();
-    }
-
-    private async handleUserNameEdit(element: HTMLElement) {
-        const input = document.createElement('input');
-        input.value = element.textContent || '';
-        input.className = 'red-user-edit-input';
-        input.placeholder = '请输入用户名';
-        element.replaceWith(input);
-        input.focus();
-
-        const handleBlur = async () => {
-            const newName = input.value.trim();
-            await this.settingsManager.updateSettings({
-                userName: newName || '夜半'
-            });
-            await this.updatePreview();
-            input.remove();
-        };
-
-        input.addEventListener('blur', handleBlur);
-        input.addEventListener('keypress', async (e) => {
-            if (e.key === 'Enter') {
-                await handleBlur();
-            }
-        });
-    }
-
-    private async handleUserIdEdit(element: HTMLElement) {
-        const input = document.createElement('input');
-        input.value = element.textContent || '';
-        input.className = 'red-user-edit-input';
-        input.placeholder = '请输入用户ID';
-        element.replaceWith(input);
-        input.focus();
-
-        const handleBlur = async () => {
-            let newId = input.value.trim();
-            if (!newId) {
-                newId = '@Yeban';
-            } else if (!newId.startsWith('@')) {
-                newId = '@' + newId;
-            }
-            await this.settingsManager.updateSettings({
-                userId: newId
-            });
-            await this.updatePreview();
-            input.remove();
-        };
-
-        input.addEventListener('blur', handleBlur);
-        input.addEventListener('keypress', async (e) => {
-            if (e.key === 'Enter') {
-                await handleBlur();
-            }
-        });
-    }
-
-    private async handleFooterTextEdit(element: HTMLElement, position: 'left' | 'right') {
-        const input = document.createElement('input');
-        input.value = element.textContent || '';
-        input.className = 'red-user-edit-input';
-        input.placeholder = '请输入页脚文本';
-        element.replaceWith(input);
-        input.focus();
-
-        const handleBlur = async () => {
-            const newText = input.value.trim();
-            await this.settingsManager.updateSettings({
-                [`footer${position === 'left' ? 'Left' : 'Right'}Text`]: newText ||
-                    (position === 'left' ? '夜半过后，光明便启程' : '欢迎关注公众号：夜半')
-            });
-            await this.updatePreview();
-            input.remove();
-        };
-
-        input.addEventListener('blur', handleBlur);
-        input.addEventListener('keypress', async (e) => {
-            if (e.key === 'Enter') {
-                await handleBlur();
-            }
-        });
-    }
 
     // #region 工具方法
     private createCustomSelect(
@@ -686,15 +594,19 @@ export class RedView extends ItemView {
         return container;
     }
 
-    private async getTemplateOptions() {
+    private async getThemeOptions() {
         await this.themeManager.loadThemes();
         const templates = this.themeManager.getAllThemes();
 
         return templates.length > 0
             ? templates.map(t => ({ value: t.id, label: t.name }))
-            : [{ value: 'default', label: '默认模板' }];
+            : [{ value: 'default', label: '默认主题' }];
     }
 
+    private async getTemplateOptions() {
+        return this.imgTemplateManager.getImgTemplateOptions();
+    }
+    
     private getFontOptions() {
         return [
             {
