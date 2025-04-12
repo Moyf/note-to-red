@@ -1,5 +1,5 @@
 import type { ImgTemplate } from '../imgTemplateManager';
-import type { SettingsManager } from '../settings';
+import type { SettingsManager } from '../settings/settings';
 import { Notice } from 'obsidian';
 
 export class DefaultTemplate implements ImgTemplate {

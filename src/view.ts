@@ -3,7 +3,7 @@ import { RedConverter } from './converter';
 import { DownloadManager } from './downloadManager';
 import type { ThemeManager } from './themeManager';
 import { DonateManager } from './donateManager';
-import type { SettingsManager } from './settings';
+import type { SettingsManager } from './settings/settings';
 import { ClipboardManager } from './clipboardManager';
 import { ImgTemplateManager } from './imgTemplateManager';
 
@@ -595,9 +595,7 @@ export class RedView extends ItemView {
     }
 
     private async getThemeOptions() {
-        await this.themeManager.loadThemes();
-        const templates = this.themeManager.getAllThemes();
-
+        const templates = this.settingsManager.getAllThemes();
         return templates.length > 0
             ? templates.map(t => ({ value: t.id, label: t.name }))
             : [{ value: 'default', label: '默认主题' }];

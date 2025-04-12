@@ -1,9 +1,10 @@
 import { App } from 'obsidian';
-import { templates } from './templates';
+import { SettingsManager } from './settings/settings';
 
-interface Theme {
+export interface Theme {
     id: string;
     name: string;
+    isPreset?: boolean;  // 添加预设主题标识
     styles: {
         // 容器基础样式
         imagePreview: string;
@@ -80,64 +81,32 @@ interface Theme {
 }
 
 export class ThemeManager {
-    private themes: Map<string, Theme> = new Map();
     private currentTheme: Theme;
     private currentFont: string = '-apple-system';
     private currentFontSize: number = 16;
     private app: App;
+    private settingsManager: SettingsManager;
 
-    constructor(app: App) {
+    constructor(app: App, settingsManager: SettingsManager) {
         this.app = app;
-        this.loadThemes(); // 加载主题
-    }
-
-    public async loadThemes() {
-        try {
-            Object.values(templates).forEach(theme => {
-                this.themes.set(theme.id, theme);
-                if (theme.id === 'default') {
-                    this.currentTheme = theme;
-                }
-            });
-        } catch (error) {
-            console.error('加载主题失败:', error);
-            throw new Error('无法加载主题文件');
-        }
-    }
-
-    public getTheme(id: string): Theme | undefined {
-        return this.themes.get(id);
-    }
-
-    public getCurrentTheme(): Theme {
-        return this.currentTheme;
+        this.settingsManager = settingsManager;
     }
 
     public setCurrentTheme(id: string): boolean {
-        const theme = this.themes.get(id);
+        const theme = this.settingsManager.getTheme(id);
         if (theme) {
             this.currentTheme = theme;
             return true;
         }
+        console.error('主题未找到:', id);
         return false;
-    }
-
-    public getAllThemes(): Theme[] {
-        return Array.from(this.themes.values());
-    }
-
-    public setFont(fontFamily: string) {
-        this.currentFont = fontFamily;
-    }
-
-    public setFontSize(size: number) {
-        this.currentFontSize = size;
     }
 
     // 修改 applyTheme 方法
     public applyTheme(element: HTMLElement): void {
-        const styles = this.currentTheme.styles;
         
+        const styles = this.currentTheme.styles;
+
         // 修改应用基础样式的方式
         const imagePreview = element.querySelector('.red-image-preview');
         if (imagePreview) {
@@ -200,7 +169,7 @@ export class ThemeManager {
                 el.setAttribute('style', styles.footer.separator);
             });
         }
-        
+
         // 应用标题样式
         ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].forEach(tag => {
             element.querySelectorAll(tag).forEach(el => {
@@ -208,12 +177,12 @@ export class ThemeManager {
                 if (!el.querySelector('.content')) {
                     const content = document.createElement('span');
                     content.className = 'content';
-                    
+
                     // 将原有内容移动到新的 span 中
                     while (el.firstChild) {
                         content.appendChild(el.firstChild);
                     }
-                    
+
                     el.appendChild(content);
 
                     const after = document.createElement('span');
@@ -314,6 +283,15 @@ export class ThemeManager {
             }
         });
     }
+
+    // 移除不再需要的方法
+    public setFont(fontFamily: string) {
+        this.currentFont = fontFamily;
+    }
+
+    public setFontSize(size: number) {
+        this.currentFontSize = size;
+    }
 }
 
-export const themeManager = (app: App) => new ThemeManager(app);
+export const themeManager = (app: App, settingsManager: SettingsManager) => new ThemeManager(app, settingsManager);

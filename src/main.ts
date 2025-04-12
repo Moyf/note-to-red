@@ -1,12 +1,13 @@
 import { Plugin, Notice } from 'obsidian';
 import { RedView, VIEW_TYPE_RED } from './view';  // 暂时改回原来的导入
 import { ThemeManager } from './themeManager';
-import { SettingsManager } from './settings';
+import { SettingsManager } from './settings/settings';
 import { RedConverter } from './converter';  // 暂时使用原来的转换器
 import { DonateManager } from './donateManager';
+import { RedSettingTab } from './settings/SettingTab';
 
 export default class RedPlugin extends Plugin {
-    private settingsManager: SettingsManager;
+    settingsManager: SettingsManager;
 
     async onload() {
         // 初始化设置管理器
@@ -14,11 +15,11 @@ export default class RedPlugin extends Plugin {
         await this.settingsManager.loadSettings();
 
         // 初始化主题管理器
-        const themeManager = new ThemeManager(this.app);
-        
+        const themeManager = new ThemeManager(this.app, this.settingsManager);
+
         // 初始化转换器
         RedConverter.initialize(this.app);
-        
+
         DonateManager.initialize(this.app, this);
 
         // 注册视图
@@ -48,8 +49,11 @@ export default class RedPlugin extends Plugin {
                 await this.activateView();
             }
         });
+
+        // 在插件的 onload 方法中添加：
+        this.addSettingTab(new RedSettingTab(this.app, this));
     }
-    
+
     async activateView() {
         // 如果视图已经存在，激活它
         const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_RED);  // 使用原来的视图类型

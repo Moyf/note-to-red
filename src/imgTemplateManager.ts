@@ -1,6 +1,6 @@
 import { DefaultTemplate } from './imgTelplate/defaultTemplate';
 import { NotesTemplate } from './imgTelplate/notesTemplate';
-import type { SettingsManager } from './settings';
+import type { SettingsManager } from './settings/settings';
 import type { ThemeManager } from './themeManager';
 export interface ImgTemplate {
     id: string;

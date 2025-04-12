@@ -7,7 +7,7 @@ npm-debug.log
 main.js
 *.js.map
 data.json
-
+styles.css
 # macOS
 .DS_Store
 
