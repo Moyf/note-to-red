@@ -1,5 +1,5 @@
 import { DefaultTemplate } from './imgTelplate/defaultTemplate';
-import { ModernTemplate } from './imgTelplate/modernTemplate';
+import { NotesTemplate } from './imgTelplate/notesTemplate';
 import type { SettingsManager } from './settings';
 import type { ThemeManager } from './themeManager';
 export interface ImgTemplate {
@@ -30,7 +30,7 @@ export class ImgTemplateManager {
         this.registerTemplate(new DefaultTemplate(this.settingsManager, this.onSettingsUpdate));
 
         // 注册现代模板
-        this.registerTemplate(new ModernTemplate());
+        this.registerTemplate(new NotesTemplate());
     }
 
     registerTemplate(template: ImgTemplate) {
