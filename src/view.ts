@@ -21,6 +21,7 @@ export class RedView extends ItemView {
     private lockButton: HTMLButtonElement;
     private copyButton: HTMLButtonElement;
     private customTemplateSelect: HTMLElement;
+    private customThemeSelect: HTMLElement;
     private customFontSelect: HTMLElement;
     private fontSizeSelect: HTMLInputElement;
     private navigationButtons: {
@@ -190,14 +191,14 @@ export class RedView extends ItemView {
     }
 
     private async initializeThemeSelect(parent: HTMLElement) {
-        this.customTemplateSelect = this.createCustomSelect(
+        this.customThemeSelect = this.createCustomSelect(
             parent,
             'red-theme-select',
             await this.getThemeOptions()
         );
-        this.customTemplateSelect.id = 'theme-select';
+        this.customThemeSelect.id = 'theme-select';
 
-        this.customTemplateSelect.querySelector('.red-select')?.addEventListener('change', async (e: any) => {
+        this.customThemeSelect.querySelector('.red-select')?.addEventListener('change', async (e: any) => {
             const value = e.detail.value;
             this.themeManager.setCurrentTheme(value);
             await this.settingsManager.updateSettings({ themeId: value });
@@ -395,17 +396,41 @@ export class RedView extends ItemView {
             this.fontSizeSelect.value = settings.fontSize.toString();
             this.themeManager.setFontSize(settings.fontSize);
         }
+        if (settings.templateId) { // 添加模板 ID 的恢复逻辑
+            await this.restoreTemplateSettings(settings.templateId);
+        }
+    }
+
+    private async restoreTemplateSettings(templateId: string) {
+        const templateSelect = this.customTemplateSelect.querySelector('.red-select-text');
+        const templateDropdown = this.customTemplateSelect.querySelector('.red-select-dropdown');
+        if (templateSelect && templateDropdown) {
+            const option = await this.getTemplateOptions();
+            const selected = option.find(o => o.value === templateId);
+            if (selected) {
+                templateSelect.textContent = selected.label;
+                this.customTemplateSelect.querySelector('.red-select')?.setAttribute('data-value', selected.value);
+                templateDropdown.querySelectorAll('.red-select-item').forEach(el => {
+                    if (el.getAttribute('data-value') === selected.value) {
+                        el.classList.add('red-selected');
+                    } else {
+                        el.classList.remove('red-selected');
+                    }
+                });
+            }
+        }
+        this.imgTemplateManager.setCurrentTemplate(templateId);
     }
 
     private async restoreThemeSettings(themeId: string) {
-        const templateSelect = this.customTemplateSelect.querySelector('.red-select-text');
-        const templateDropdown = this.customTemplateSelect.querySelector('.red-select-dropdown');
+        const templateSelect = this.customThemeSelect.querySelector('.red-select-text');
+        const templateDropdown = this.customThemeSelect.querySelector('.red-select-dropdown');
         if (templateSelect && templateDropdown) {
             const option = await this.getThemeOptions();
             const selected = option.find(o => o.value === themeId);
             if (selected) {
                 templateSelect.textContent = selected.label;
-                this.customTemplateSelect.querySelector('.red-select')?.setAttribute('data-value', selected.value);
+                this.customThemeSelect.querySelector('.red-select')?.setAttribute('data-value', selected.value);
                 templateDropdown.querySelectorAll('.red-select-item').forEach(el => {
                     if (el.getAttribute('data-value') === selected.value) {
                         el.classList.add('red-selected');
@@ -475,10 +500,15 @@ export class RedView extends ItemView {
         this.lockButton.disabled = !enabled;
 
         const templateSelect = this.customTemplateSelect.querySelector('.red-select');
+        const themeSelect = this.customThemeSelect.querySelector('.red-select');
         const fontSelect = this.customFontSelect.querySelector('.red-select');
         if (templateSelect) {
             templateSelect.classList.toggle('disabled', !enabled);
             templateSelect.setAttribute('style', `pointer-events: ${enabled ? 'auto' : 'none'}`);
+        }
+        if (themeSelect) {
+            themeSelect.classList.toggle('disabled', !enabled);
+            themeSelect.setAttribute('style', `pointer-events: ${enabled ? 'auto' : 'none'}`);
         }
         if (fontSelect) {
             fontSelect.classList.toggle('disabled', !enabled);

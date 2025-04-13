@@ -58,7 +58,7 @@ export class CreateThemeModal extends Modal {
             },
             paragraph: "line-height: 1.75; margin-bottom: 1.1em; font-size: 15px; color: #5a4a42;",
             emphasis: {
-                strong: "font-weight: 600; color: #d2691e; text-shadow: 0 2px 4px rgba(210,105,30,0.1);",
+                strong: "font-weight: 600; color: #d2691e;",
                 em: "font-style: normal; color: #b87333; background: rgba(184,115,51,0.1); padding: 0 4px; border-left: 2px solid #b8733380;",
                 del: "text-decoration: line-through; color: #8b4513; opacity: 0.8;"
             },
@@ -582,9 +582,9 @@ export class CreateThemeModal extends Modal {
         new Setting(footerSection)
             .setName('页脚背景')
             .setDesc('设置页脚区域的背景颜色和透明度')
-            .addText(text => {
+            .addColorPicker(color => { // 使用颜色选择器
                 const currentBg = styles.container.match(/background:\s*([^;]+)/)?.[1];
-                text.setValue(currentBg)
+                color.setValue(currentBg)
                     .onChange(value => {
                         styles.container = styles.container.replace(/background:\s*[^;]+/, `background: ${value}`);
                     });
