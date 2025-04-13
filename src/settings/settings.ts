@@ -1,5 +1,6 @@
 import { Theme } from '../themeManager';
 import  RedPlugin  from '../main';
+import { EventEmitter } from 'events';
 interface RedSettings {
     templateId: string;
     themeId: string;
@@ -16,6 +17,7 @@ interface RedSettings {
     timeFormat: string;
     footerLeftText: string;
     footerRightText: string;
+    customFonts: { value: string; label: string; isPreset?: boolean }[];  // 添加自定义字体配置
 }
 
 export const DEFAULT_SETTINGS: RedSettings = {
@@ -33,15 +35,42 @@ export const DEFAULT_SETTINGS: RedSettings = {
     showTime: true,
     timeFormat: 'zh-CN',
     footerLeftText: '夜半过后，光明便启程',
-    footerRightText: '欢迎关注公众号：夜半'
-    
+    footerRightText: '欢迎关注公众号：夜半',
+    customFonts: [
+        {
+            value: 'Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, "PingFang SC", Cambria, Cochin, Georgia, Times, "Times New Roman", serif',
+            label: '默认字体',
+            isPreset: true
+        },
+        {
+            value: 'SimSun, "宋体", serif',
+            label: '宋体',
+            isPreset: true
+        },
+        {
+            value: 'SimHei, "黑体", sans-serif',
+            label: '黑体',
+            isPreset: true
+        },
+        {
+            value: 'KaiTi, "楷体", serif',
+            label: '楷体',
+            isPreset: true
+        },
+        {
+            value: '"Microsoft YaHei", "微软雅黑", sans-serif',
+            label: '雅黑',
+            isPreset: true
+        }
+    ],
 }
 
-export class SettingsManager {
+export class SettingsManager extends EventEmitter {
     private plugin: RedPlugin;
     private settings: RedSettings;
 
     constructor(plugin: RedPlugin) {
+        super();
         this.plugin = plugin;
         this.settings = DEFAULT_SETTINGS;
     }
@@ -76,6 +105,11 @@ export class SettingsManager {
         return [...this.settings.themes, ...this.settings.customThemes];
     }
 
+    // 新增：获取可见主题
+    getVisibleThemes(): Theme[] {
+        return this.getAllThemes().filter(theme => theme.isVisible !== false);
+    }
+
     getTheme(themeId: string): Theme | undefined {
         return this.settings.themes.find(theme => theme.id === themeId) 
             || this.settings.customThemes.find(theme => theme.id === themeId);
@@ -85,21 +119,35 @@ export class SettingsManager {
         theme.isPreset = false;
         this.settings.customThemes.push(theme);
         await this.saveSettings();
+        this.emit('theme-visibility-changed');
     }
 
     async updateTheme(themeId: string, updatedTheme: Partial<Theme>) {
-        const theme = this.getTheme(themeId);
-        if (theme && !theme.isPreset) {
-            const index = this.settings.customThemes.findIndex(t => t.id === themeId);
-            if (index !== -1) {
-                this.settings.customThemes[index] = {
-                    ...this.settings.customThemes[index],
-                    ...updatedTheme
+        const presetThemeIndex = this.settings.themes.findIndex(t => t.id === themeId);
+        if (presetThemeIndex !== -1) {
+            if ('isVisible' in updatedTheme) {
+                this.settings.themes[presetThemeIndex] = {
+                    ...this.settings.themes[presetThemeIndex],
+                    isVisible: updatedTheme.isVisible
                 };
                 await this.saveSettings();
+                this.emit('theme-visibility-changed');
                 return true;
             }
+            return false;
         }
+
+        const customThemeIndex = this.settings.customThemes.findIndex(t => t.id === themeId);
+        if (customThemeIndex !== -1) {
+            this.settings.customThemes[customThemeIndex] = {
+                ...this.settings.customThemes[customThemeIndex],
+                ...updatedTheme
+            };
+            await this.saveSettings();
+            this.emit('theme-visibility-changed');
+            return true;
+        }
+        
         return false;
     }
 
@@ -111,6 +159,7 @@ export class SettingsManager {
                 this.settings.themeId = 'default';
             }
             await this.saveSettings();
+            this.emit('theme-visibility-changed');
             return true;
         }
         return false;
@@ -127,5 +176,30 @@ export class SettingsManager {
     async updateSettings(settings: Partial<RedSettings>) {
         this.settings = { ...this.settings, ...settings };
         await this.saveSettings();
+    }
+
+    getFontOptions() {
+        return this.settings.customFonts;
+    }
+
+    async addCustomFont(font: { value: string; label: string }) {
+        this.settings.customFonts.push({ ...font, isPreset: false });
+        await this.saveSettings();
+    }
+
+    async removeFont(value: string) {
+        const font = this.settings.customFonts.find(f => f.value === value);
+        if (font && !font.isPreset) {
+            this.settings.customFonts = this.settings.customFonts.filter(f => f.value !== value);
+            await this.saveSettings();
+        }
+    }
+
+    async updateFont(oldValue: string, newFont: { value: string; label: string }) {
+        const index = this.settings.customFonts.findIndex(f => f.value === oldValue);
+        if (index !== -1 && !this.settings.customFonts[index].isPreset) {
+            this.settings.customFonts[index] = { ...newFont, isPreset: false };
+            await this.saveSettings();
+        }
     }
 }

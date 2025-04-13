@@ -1,6 +1,7 @@
-import { App, PluginSettingTab, Setting, setIcon } from 'obsidian';
+import { App, PluginSettingTab, Setting, setIcon, Notice } from 'obsidian';
 import RedPlugin from '../main'; // 修改插件名以匹配类名
 import { CreateThemeModal } from './CreateThemeModal';
+import { CreateFontModal } from './CreateFontModal';
 
 export class RedSettingTab extends PluginSettingTab {
     plugin: RedPlugin; // 修改插件类型以匹配类名
@@ -75,6 +76,7 @@ export class RedSettingTab extends PluginSettingTab {
                                     (updatedTheme) => {
                                         this.plugin.settingsManager.updateTheme(theme.id, updatedTheme);
                                         this.display();
+                                        new Notice('请重启 Obsidian 或重新加载以使更改生效');
                                     },
                                     theme
                                 ).open();
@@ -83,9 +85,9 @@ export class RedSettingTab extends PluginSettingTab {
                         btn.setIcon('trash')
                             .setTooltip('删除')
                             .onClick(async () => {
-                                
                                 await this.plugin.settingsManager.removeTheme(theme.id);
                                 this.display();
+                                new Notice('请重启 Obsidian 或重新加载以使更改生效');
                             }));
             });
     
@@ -99,13 +101,205 @@ export class RedSettingTab extends PluginSettingTab {
                         this.app,
                         async (newTheme) => {
                             await this.plugin.settingsManager.addCustomTheme(newTheme);
-                            this.display(); // 改为调用 display 刷新整个设置界面
+                            this.display();
+                            new Notice('请重启 Obsidian 或重新加载以使更改生效');
                         }
                     ).open();
                 }));
     }
 
     private renderBasicSettings(containerEl: HTMLElement): void {
-        // 基本设置的具体实现
+        // 主题显示设置部分
+        const themeVisibilitySection = containerEl.createDiv('red-settings-subsection');
+        const themeVisibilityHeader = themeVisibilitySection.createDiv('red-settings-subsection-header');
+        
+        const themeVisibilityToggle = themeVisibilityHeader.createSpan('red-settings-subsection-toggle');
+        setIcon(themeVisibilityToggle, 'chevron-right');
+        
+        themeVisibilityHeader.createEl('h3', { text: '主题显示设置' });
+        
+        const themeVisibilityContent = themeVisibilitySection.createDiv('red-settings-subsection-content');
+        
+        // 折叠/展开逻辑
+        themeVisibilityHeader.addEventListener('click', () => {
+            const isExpanded = !themeVisibilitySection.hasClass('is-expanded');
+            themeVisibilitySection.toggleClass('is-expanded', isExpanded);
+            setIcon(themeVisibilityToggle, isExpanded ? 'chevron-down' : 'chevron-right');
+        });
+        
+   
+        
+        // 主题选择容器
+        const themeSelectionContainer = themeVisibilityContent.createDiv('theme-selection-container');
+        
+        // 左侧：所有主题列表
+        const allThemesContainer = themeSelectionContainer.createDiv('all-themes-container');
+        allThemesContainer.createEl('h4', { text: '隐藏主题' });
+        const allThemesList = allThemesContainer.createDiv('themes-list');
+        
+        // 中间：控制按钮
+        const controlButtonsContainer = themeSelectionContainer.createDiv('control-buttons-container');
+        const addButton = controlButtonsContainer.createEl('button', { text: '>' });
+        const removeButton = controlButtonsContainer.createEl('button', { text: '<' });
+
+        // 右侧：显示的主题列表
+        const visibleThemesContainer = themeSelectionContainer.createDiv('visible-themes-container');
+        visibleThemesContainer.createEl('h4', { text: '显示主题' });
+        const visibleThemesList = visibleThemesContainer.createDiv('themes-list');
+        
+        
+        
+        // 获取所有主题
+        const allThemes = this.plugin.settingsManager.getAllThemes();
+        
+        // 渲染主题列表
+        const renderThemeLists = () => {
+            // 清空列表
+            allThemesList.empty();
+            visibleThemesList.empty();
+            
+            // 填充左侧列表（所有未显示的主题）
+            allThemes
+                .filter(theme => theme.isVisible === false)
+                .forEach(theme => {
+                    const themeItem = allThemesList.createDiv('theme-list-item');
+                    themeItem.textContent = theme.name;
+                    themeItem.dataset.themeId = theme.id;
+                    
+                    // 点击选中/取消选中
+                    themeItem.addEventListener('click', () => {
+                        themeItem.toggleClass('selected', !themeItem.hasClass('selected'));
+                    });
+                });
+            
+            // 填充右侧列表（所有显示的主题）
+            allThemes
+                .filter(theme => theme.isVisible !== false) // 默认显示
+                .forEach(theme => {
+                    const themeItem = visibleThemesList.createDiv('theme-list-item');
+                    themeItem.textContent = theme.name;
+                    themeItem.dataset.themeId = theme.id;
+                    
+                    // 点击选中/取消选中
+                    themeItem.addEventListener('click', () => {
+                        themeItem.toggleClass('selected', !themeItem.hasClass('selected'));
+                    });
+                });
+        };
+        
+        // 初始渲染
+        renderThemeLists();
+        
+        // 添加按钮事件
+        addButton.addEventListener('click', async () => {
+            const selectedItems = Array.from(allThemesList.querySelectorAll('.theme-list-item.selected'));
+            if (selectedItems.length === 0) return;
+            
+            for (const item of selectedItems) {
+                const themeId = (item as HTMLElement).dataset.themeId;
+                if (!themeId) continue;
+                
+                const theme = allThemes.find(t => t.id === themeId);
+                if (theme) {
+                    theme.isVisible = true;
+                    await this.plugin.settingsManager.updateTheme(themeId, theme);
+                }
+            }
+            
+            renderThemeLists();
+            new Notice('请重启 Obsidian 或重新加载以使更改生效');
+        });
+        
+        // 移除按钮事件
+        removeButton.addEventListener('click', async () => {
+            const selectedItems = Array.from(visibleThemesList.querySelectorAll('.theme-list-item.selected'));
+            if (selectedItems.length === 0) return;
+            
+            for (const item of selectedItems) {
+                const themeId = (item as HTMLElement).dataset.themeId;
+                if (!themeId) continue;
+                
+                const theme = allThemes.find(t => t.id === themeId);
+                if (theme) {
+                    theme.isVisible = false;
+                    await this.plugin.settingsManager.updateTheme(themeId, theme);
+                }
+            }
+            
+            renderThemeLists();
+            new Notice('请重启 Obsidian 或重新加载以使更改生效');
+        });
+        
+        // 这里可以添加其他基本设置
+        // 例如：字体设置、导出设置等
+        // 添加字体设置区域
+        // 字体管理区域
+        const fontSection = containerEl.createDiv('red-settings-subsection');
+        const fontHeader = fontSection.createDiv('red-settings-subsection-header');
+        const fontToggle = fontHeader.createSpan('red-settings-subsection-toggle');
+        setIcon(fontToggle, 'chevron-right');
+        
+        fontHeader.createEl('h3', { text: '字体管理' });
+        
+        const fontContent = fontSection.createDiv('red-settings-subsection-content');
+        
+        // 折叠/展开逻辑
+        fontHeader.addEventListener('click', () => {
+            const isExpanded = !fontSection.hasClass('is-expanded');
+            fontSection.toggleClass('is-expanded', isExpanded);
+            setIcon(fontToggle, isExpanded ? 'chevron-down' : 'chevron-right');
+        });
+
+        // 字体列表
+        const fontList = fontContent.createDiv('font-management');
+        this.plugin.settingsManager.getFontOptions().forEach(font => {
+            const fontItem = fontList.createDiv('font-item');
+            const setting = new Setting(fontItem)
+                .setName(font.label)
+                .setDesc(font.value);
+
+            // 只为非预设字体添加编辑和删除按钮
+            if (!font.isPreset) {
+                setting
+                    .addExtraButton(btn => 
+                        btn.setIcon('pencil')
+                            .setTooltip('编辑')
+                            .onClick(() => {
+                                new CreateFontModal(
+                                    this.app,
+                                    async (updatedFont) => {
+                                        await this.plugin.settingsManager.updateFont(font.value, updatedFont);
+                                        this.display();
+                                        new Notice('请重启 Obsidian 或重新加载以使更改生效');
+                                    },
+                                    font
+                                ).open();
+                            }))
+                    .addExtraButton(btn => 
+                        btn.setIcon('trash')
+                            .setTooltip('删除')
+                            .onClick(async () => {
+                                await this.plugin.settingsManager.removeFont(font.value);
+                                this.display();
+                                new Notice('请重启 Obsidian 或重新加载以使更改生效');
+                            }));
+            }
+        });
+
+        // 添加新字体按钮
+        new Setting(fontContent)
+            .addButton(btn => btn
+                .setButtonText('+ 添加字体')
+                .setCta()
+                .onClick(() => {
+                    new CreateFontModal(
+                        this.app,
+                        async (newFont) => {
+                            await this.plugin.settingsManager.addCustomFont(newFont);
+                            this.display();
+                            new Notice('请重启 Obsidian 或重新加载以使更改生效');
+                        }
+                    ).open();
+                }));
     }
 }

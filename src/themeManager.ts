@@ -6,6 +6,7 @@ export interface Theme {
     name: string;
     description: string;
     isPreset?: boolean;  // 添加预设主题标识
+    isVisible?: boolean; // 控制主题是否显示
     styles: {
         // 容器基础样式
         imagePreview: string;

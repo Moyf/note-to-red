@@ -14,6 +14,7 @@ export class CreateThemeModal extends Modal {
             name: '',
             description: '',
             isPreset: false,
+            isVisible: true,
             styles: this.initializeStyles() // 使用合并后的初始化方法
         };
     }

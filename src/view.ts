@@ -595,7 +595,7 @@ export class RedView extends ItemView {
     }
 
     private async getThemeOptions() {
-        const templates = this.settingsManager.getAllThemes();
+        const templates = this.settingsManager.getVisibleThemes();
         return templates.length > 0
             ? templates.map(t => ({ value: t.id, label: t.name }))
             : [{ value: 'default', label: '默认主题' }];
@@ -606,28 +606,7 @@ export class RedView extends ItemView {
     }
     
     private getFontOptions() {
-        return [
-            {
-                value: 'Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, "PingFang SC", Cambria, Cochin, Georgia, Times, "Times New Roman", serif',
-                label: '默认字体'
-            },
-            {
-                value: 'SimSun, "宋体", serif',
-                label: '宋体'
-            },
-            {
-                value: 'SimHei, "黑体", sans-serif',
-                label: '黑体'
-            },
-            {
-                value: 'KaiTi, "楷体", serif',
-                label: '楷体'
-            },
-            {
-                value: '"Microsoft YaHei", "微软雅黑", sans-serif',
-                label: '雅黑'
-            }
-        ];
+        return this.settingsManager.getFontOptions();
     }
     // #endregion
 }
