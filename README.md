@@ -1,7 +1,7 @@
 # Note to RED
 一键将 Obsidian 笔记转换为小红书图片格式的插件。
 
-![downloads](https://img.shields.io/badge/downloads-1K-brightgreen) ![version](https://img.shields.io/badge/version-1.0.0-blue) ![license](https://img.shields.io/badge/license-MIT-green) [![donate](https://img.shields.io/badge/打赏-支持作者-orange)](https://github.com/YeBan/note-to-red#支持作者)
+![downloads](https://img.shields.io/badge/downloads-1K-brightgreen) ![version](https://img.shields.io/badge/version-1.0.0-blue) ![license](https://img.shields.io/badge/license-MIT-green) [![donate](https://img.shields.io/badge/打赏-支持作者-orange)](https://ko-fi.com/bruceyeban#支持作者) [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-支持作者-yellow)](https://ko-fi.com/bruceyeban)
 
 ## 功能特点
 - 📝 使用二级标题分割内容，每个标题自动生成一张配图
@@ -49,7 +49,8 @@
 如果这个插件对你有所帮助，可以考虑请作者喝杯咖啡 ☕：
 - 微信支付
 - 支付宝
-- Buy Me a Coffee
+- [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-支持作者-yellow)](https://ko-fi.com/bruceyeban)
+
 您的支持是我持续改进这个插件的动力！
 
 ## 许可证
