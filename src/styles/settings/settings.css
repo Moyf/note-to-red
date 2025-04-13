@@ -278,6 +278,7 @@
 .red-settings .red-settings-subsection-content {
     display: none;
     padding: 1rem;
+    margin: 0 20px;
     background-color: var(--background-primary);
 }
 

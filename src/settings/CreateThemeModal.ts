@@ -408,7 +408,7 @@ export class CreateThemeModal extends Modal {
                             styles.footnote[key] = styles.footnote[key].replace(/color:\s*#[a-fA-F0-9]+/, `color: ${value}`);
                         });
                         styles.image = styles.image.replace(/border:\s*1px solid\s*#[a-fA-F0-9]+80/, `border: 1px solid ${value}80`);
-                        
+
                     });
             });
     }
@@ -516,22 +516,26 @@ export class CreateThemeModal extends Modal {
 
     private addTitleSettings(container: HTMLElement, styles: any) {
         ['h2', 'h3', 'base'].forEach(level => {
-            const titleSection = container.createDiv('title-level-section');
-            titleSection.createEl('h4', { text: level === 'base' ? '其他标题样式' : `${level.toUpperCase()} 标题样式` });
+            const titleSection = container.createDiv('style-section');
 
-            new Setting(titleSection)
-                .setName('上边距')
-                .setDesc('设置标题与上方内容之间的间距（单位：像素）')
-                .addText(text => {
-                    const currentMargin = styles[level].base.match(/margin:\s*(\d+)px/)?.[1];
-                    text.setValue(currentMargin)
-                        .onChange(value => {
-                            const margin = parseInt(value) || 10;
-                            styles[level].base = styles[level].base.replace(/margin:\s*\d+px/, `margin: ${margin}px`);
-                        });
-                });
+            // 创建折叠面板标题区域
+            const header = titleSection.createDiv('style-section-header');
+            const titleContainer = header.createDiv('style-section-title');
+            const toggle = titleContainer.createSpan('style-section-toggle');
+            setIcon(toggle, 'chevron-right');
+            titleContainer.createEl('h4', { text: level === 'base' ? '其他标题样式' : `${level.toUpperCase()} 标题样式` });
 
-            new Setting(titleSection)
+            // 创建内容区域
+            const content = titleSection.createDiv('style-section-content');
+            content.style.display = 'none'; // 初始状态为折叠
+
+            header.addEventListener('click', () => {
+                const isExpanded = content.style.display === 'none';
+                content.style.display = isExpanded ? 'block' : 'none';
+                setIcon(toggle, isExpanded ? 'chevron-down' : 'chevron-right');
+            });
+
+            new Setting(content)
                 .setName('字体大小')
                 .setDesc('设置标题的字体大小（单位：em，相对于基础字号的倍数）')
                 .addText(text => {
@@ -543,7 +547,7 @@ export class CreateThemeModal extends Modal {
                         });
                 });
 
-            new Setting(titleSection)
+            new Setting(content)
                 .setName('文本颜色')
                 .setDesc('设置标题文字的颜色')
                 .addColorPicker(color => {
@@ -588,22 +592,26 @@ export class CreateThemeModal extends Modal {
     }
 
     private addParagraphAndEmphasisSettings(container: HTMLElement, styles: any) {
-        const paragraphSection = container.createDiv('paragraph-section');
-        paragraphSection.createEl('h4', { text: '段落样式' });
+        const paragraphSection = container.createDiv('style-section'); // 修改为 style-section
 
-        new Setting(paragraphSection)
-            .setName('行高')
-            .setDesc('设置段落文本的行高（推荐值：1.5-2.0）')
-            .addText(text => {
-                const currentLineHeight = styles.paragraph.match(/line-height:\s*([\d.]+)/)?.[1];
-                text.setValue(currentLineHeight)
-                    .onChange(value => {
-                        const lineHeight = parseFloat(value) || 1.75;
-                        styles.paragraph = styles.paragraph.replace(/line-height:\s*[\d.]+/, `line-height: ${lineHeight}`);
-                    });
-            });
+        // 创建折叠面板标题区域
+        const paragraphHeader = paragraphSection.createDiv('style-section-header');
+        const paragraphTitleContainer = paragraphHeader.createDiv('style-section-title');
+        const paragraphToggle = paragraphTitleContainer.createSpan('style-section-toggle');
+        setIcon(paragraphToggle, 'chevron-right');
+        paragraphTitleContainer.createEl('h4', { text: '段落样式' });
 
-        new Setting(paragraphSection)
+        // 创建内容区域
+        const paragraphContent = paragraphSection.createDiv('style-section-content');
+        paragraphContent.style.display = 'none'; // 初始状态为折叠
+
+        paragraphHeader.addEventListener('click', () => {
+            const isExpanded = paragraphContent.style.display === 'none';
+            paragraphContent.style.display = isExpanded ? 'block' : 'none';
+            setIcon(paragraphToggle, isExpanded ? 'chevron-down' : 'chevron-right');
+        });
+
+        new Setting(paragraphContent)
             .setName('下边距')
             .setDesc('设置段落与下方内容之间的间距（单位：em）')
             .addText(text => {
@@ -615,7 +623,7 @@ export class CreateThemeModal extends Modal {
                     });
             });
 
-        new Setting(paragraphSection)
+        new Setting(paragraphContent)
             .setName('字体大小')
             .setDesc('设置段落文本的字体大小（单位：像素）')
             .addText(text => {
@@ -627,7 +635,7 @@ export class CreateThemeModal extends Modal {
                     });
             });
 
-        new Setting(paragraphSection)
+        new Setting(paragraphContent)
             .setName('文本颜色')
             .setDesc('设置段落文本的颜色')
             .addColorPicker(color => {
@@ -638,12 +646,26 @@ export class CreateThemeModal extends Modal {
                     });
             });
 
-        // 强调样式设置
-        const emphasisSection = container.createDiv('emphasis-section');
-        emphasisSection.createEl('h4', { text: '强调样式' });
+            const emphasisSection = container.createDiv('style-section'); // 修改为 style-section
 
-        // 粗体设置
-        new Setting(emphasisSection)
+            // 创建折叠面板标题区域
+            const emphasisHeader = emphasisSection.createDiv('style-section-header');
+            const emphasisTitleContainer = emphasisHeader.createDiv('style-section-title');
+            const emphasisToggle = emphasisTitleContainer.createSpan('style-section-toggle');
+            setIcon(emphasisToggle, 'chevron-right');
+            emphasisTitleContainer.createEl('h4', { text: '强调样式' });
+    
+            // 创建内容区域
+            const emphasisContent = emphasisSection.createDiv('style-section-content');
+            emphasisContent.style.display = 'none'; // 初始状态为折叠
+    
+            emphasisHeader.addEventListener('click', () => {
+                const isExpanded = emphasisContent.style.display === 'none';
+                emphasisContent.style.display = isExpanded ? 'block' : 'none';
+                setIcon(emphasisToggle, isExpanded ? 'chevron-down' : 'chevron-right');
+            });
+    
+            new Setting(emphasisContent)
             .setName('粗体样式')
             .setDesc('设置粗体文本的样式')
             .addColorPicker(color => {
@@ -655,7 +677,7 @@ export class CreateThemeModal extends Modal {
             });
 
         // 斜体设置
-        new Setting(emphasisSection)
+        new Setting(emphasisContent)
             .setName('斜体样式')
             .setDesc('设置斜体文本的样式')
             .addColorPicker(color => {
@@ -667,7 +689,7 @@ export class CreateThemeModal extends Modal {
             });
 
         // 删除线设置
-        new Setting(emphasisSection)
+        new Setting(emphasisContent)
             .setName('删除线样式')
             .setDesc('设置删除线文本的样式')
             .addColorPicker(color => {
@@ -765,21 +787,26 @@ export class CreateThemeModal extends Modal {
 
     private addCodeSettings(container: HTMLElement, styles: any) {
         // 代码块设置
-        const codeBlockSection = container.createDiv('code-block-section');
-        codeBlockSection.createEl('h4', { text: '代码块样式' });
+        const codeBlockSection = container.createDiv('style-section'); // 修改为 style-section
 
-        new Setting(codeBlockSection)
-            .setName('背景颜色')
-            .setDesc('设置代码块的背景颜色')
-            .addColorPicker(color => {
-                const currentBg = styles.block.match(/background:\s*(#[a-fA-F0-9]+)/)?.[1];
-                color.setValue(currentBg)
-                    .onChange(value => {
-                        styles.block = styles.block.replace(/background:\s*#[a-fA-F0-9]+/, `background: ${value}`);
-                    });
-            });
+        // 创建折叠面板标题区域
+        const codeBlockHeader = codeBlockSection.createDiv('style-section-header');
+        const codeBlockTitleContainer = codeBlockHeader.createDiv('style-section-title');
+        const codeBlockToggle = codeBlockTitleContainer.createSpan('style-section-toggle');
+        setIcon(codeBlockToggle, 'chevron-right');
+        codeBlockTitleContainer.createEl('h4', { text: '代码块样式' });
 
-        new Setting(codeBlockSection)
+        // 创建内容区域
+        const codeBlockContent = codeBlockSection.createDiv('style-section-content');
+        codeBlockContent.style.display = 'none'; // 初始状态为折叠
+
+        codeBlockHeader.addEventListener('click', () => {
+            const isExpanded = codeBlockContent.style.display === 'none';
+            codeBlockContent.style.display = isExpanded ? 'block' : 'none';
+            setIcon(codeBlockToggle, isExpanded ? 'chevron-down' : 'chevron-right');
+        });
+
+        new Setting(codeBlockContent)
             .setName('文本颜色')
             .setDesc('设置代码块内文本的颜色')
             .addColorPicker(color => {
@@ -790,7 +817,7 @@ export class CreateThemeModal extends Modal {
                     });
             });
 
-        new Setting(codeBlockSection)
+        new Setting(codeBlockContent)
             .setName('圆角大小')
             .setDesc('设置代码块的圆角大小（单位：像素）')
             .addText(text => {
@@ -803,10 +830,26 @@ export class CreateThemeModal extends Modal {
             });
 
         // 行内代码设置
-        const inlineCodeSection = container.createDiv('inline-code-section');
-        inlineCodeSection.createEl('h4', { text: '行内代码样式' });
+        const inlineCodeSection = container.createDiv('style-section'); // 修改为 style-section
 
-        new Setting(inlineCodeSection)
+        // 创建折叠面板标题区域
+        const inlineCodeHeader = inlineCodeSection.createDiv('style-section-header');
+        const inlineCodeTitleContainer = inlineCodeHeader.createDiv('style-section-title');
+        const inlineCodeToggle = inlineCodeTitleContainer.createSpan('style-section-toggle');
+        setIcon(inlineCodeToggle, 'chevron-right');
+        inlineCodeTitleContainer.createEl('h4', { text: '行内代码样式' });
+
+        // 创建内容区域
+        const inlineCodeContent = inlineCodeSection.createDiv('style-section-content');
+        inlineCodeContent.style.display = 'none'; // 初始状态为折叠
+
+        inlineCodeHeader.addEventListener('click', () => {
+            const isExpanded = inlineCodeContent.style.display === 'none';
+            inlineCodeContent.style.display = isExpanded ? 'block' : 'none';
+            setIcon(inlineCodeToggle, isExpanded ? 'chevron-down' : 'chevron-right');
+        });
+
+        new Setting(inlineCodeContent)
             .setName('背景颜色')
             .setDesc('设置行内代码的背景颜色')
             .addColorPicker(color => {
@@ -817,7 +860,7 @@ export class CreateThemeModal extends Modal {
                     });
             });
 
-        new Setting(inlineCodeSection)
+        new Setting(inlineCodeContent)
             .setName('文本颜色')
             .setDesc('设置行内代码的文本颜色')
             .addColorPicker(color => {

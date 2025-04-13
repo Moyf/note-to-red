@@ -2,6 +2,7 @@ import { App, PluginSettingTab, Setting, setIcon, Notice } from 'obsidian';
 import RedPlugin from '../main'; // 修改插件名以匹配类名
 import { CreateThemeModal } from './CreateThemeModal';
 import { CreateFontModal } from './CreateFontModal';
+import { ConfirmModal } from './ConfirmModal'; // 添加确认模态框导入
 
 export class RedSettingTab extends PluginSettingTab {
     plugin: RedPlugin; // 修改插件类型以匹配类名
@@ -84,10 +85,18 @@ export class RedSettingTab extends PluginSettingTab {
                     .addExtraButton(btn => 
                         btn.setIcon('trash')
                             .setTooltip('删除')
-                            .onClick(async () => {
-                                await this.plugin.settingsManager.removeTheme(theme.id);
-                                this.display();
-                                new Notice('请重启 Obsidian 或重新加载以使更改生效');
+                            .onClick(() => {
+                                // 新增确认模态框
+                                new ConfirmModal(
+                                    this.app,
+                                    '确认删除主题',
+                                    `确定要删除「${theme.name}」主题吗？此操作不可恢复。`,
+                                    async () => {
+                                        await this.plugin.settingsManager.removeTheme(theme.id);
+                                        this.display();
+                                        new Notice('请重启 Obsidian 或重新加载以使更改生效');
+                                    }
+                                ).open();
                             }));
             });
     
@@ -278,10 +287,18 @@ export class RedSettingTab extends PluginSettingTab {
                     .addExtraButton(btn => 
                         btn.setIcon('trash')
                             .setTooltip('删除')
-                            .onClick(async () => {
-                                await this.plugin.settingsManager.removeFont(font.value);
-                                this.display();
-                                new Notice('请重启 Obsidian 或重新加载以使更改生效');
+                            .onClick(() => {
+                                // 新增确认模态框
+                                new ConfirmModal(
+                                    this.app,
+                                    '确认删除字体',
+                                    `确定要删除「${font.label}」字体配置吗？`,
+                                    async () => {
+                                        await this.plugin.settingsManager.removeFont(font.value);
+                                        this.display();
+                                        new Notice('请重启 Obsidian 或重新加载以使更改生效');
+                                    }
+                                ).open();
                             }));
             }
         });

@@ -101,6 +101,11 @@
     font-size: 1.1em;
     color: var(--text-normal);
 }
+.red-theme-modal .style-section-title h4 {
+    margin: 0;
+    font-size: 1em; /* 确保 h4 的字体大小小于 h3 */
+    color: var(--text-normal);
+}
 
 .red-theme-modal .style-section-toggle {
     display: flex;
@@ -137,15 +142,14 @@
 }
 
 .red-theme-modal .setting-item-name {
-    font-size: 1.1em;
-    font-weight: 500;
+    font-size: 0.9em; /* 确保设置项名称的字体大小小于 h4 */
+    font-weight: normal;
     color: var(--text-normal);
-    margin-bottom: 0.3rem;
 }
 
 .red-theme-modal .setting-item-description {
+    font-size: 0.8em; /* 确保设置项描述的字体大小小于 h4 */
     color: var(--text-muted);
-    font-size: 0.9em;
 }
 
 /* 输入控件样式 */
