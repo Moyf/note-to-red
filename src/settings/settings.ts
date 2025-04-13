@@ -1,5 +1,5 @@
 import { Theme } from '../themeManager';
-
+import  RedPlugin  from '../main';
 interface RedSettings {
     templateId: string;
     themeId: string;
@@ -18,9 +18,9 @@ interface RedSettings {
     footerRightText: string;
 }
 
-const DEFAULT_SETTINGS: RedSettings = {
+export const DEFAULT_SETTINGS: RedSettings = {
     templateId: 'default',
-    themeId: 'light',
+    themeId: 'default',
     fontFamily: 'Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, "PingFang SC"',
     fontSize: 16,
     backgroundId: '',
@@ -38,31 +38,36 @@ const DEFAULT_SETTINGS: RedSettings = {
 }
 
 export class SettingsManager {
-    private plugin: any;
+    private plugin: RedPlugin;
     private settings: RedSettings;
 
-    constructor(plugin: any) {
+    constructor(plugin: RedPlugin) {
         this.plugin = plugin;
         this.settings = DEFAULT_SETTINGS;
     }
 
     async loadSettings() {
-        const savedData = await this.plugin.loadData();
-        
+        let savedData = await this.plugin.loadData();
+
+        // 确保 savedData 是一个对象
+        if (!savedData) {
+            savedData = {};
+        }
+    
         // 如果是首次加载或 themes 为空，导入预设主题
-        if (!savedData?.themes || savedData.themes.length === 0) {
+        if (!savedData.themes || savedData.themes.length === 0) {
             const { templates } = await import('../templates');
             savedData.themes = Object.values(templates).map(theme => ({
                 ...theme,
                 isPreset: true
             }));
         }
-        
+    
         // 确保 customThemes 存在
         if (!savedData.customThemes) {
             savedData.customThemes = [];
         }
-        
+    
         this.settings = Object.assign({}, DEFAULT_SETTINGS, savedData);
     }
 

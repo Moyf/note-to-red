@@ -4,3 +4,5 @@
 @import url('./theme/theme-user-info.css');
 @import url('./template/red-notes.css');
 @import url('./element/markdown-element.css');
+@import url('./settings/settings.css');
+@import url('./settings/theme-modal.css');

@@ -4,6 +4,7 @@ import { SettingsManager } from './settings/settings';
 export interface Theme {
     id: string;
     name: string;
+    description: string;
     isPreset?: boolean;  // 添加预设主题标识
     styles: {
         // 容器基础样式
