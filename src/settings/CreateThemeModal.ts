@@ -21,11 +21,11 @@ export class CreateThemeModal extends Modal {
 
     private initializeStyles(): any {
         return {
-            imagePreview: "background: #fffaf5; padding: 32px 28px; border: 1px solid #b8733380;",
+            imagePreview: "background: #fffaf5; padding: 32px 28px;",
             header: {
                 avatar: {
-                    container: "width: 42px; height: 42px; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 16px rgba(184,115,51,0.1); border: 1px solid #b8733380;",
-                    placeholder: "background: linear-gradient(135deg, #fff0e6, #ffe4c4); transition: all 0.3s ease;",
+                    container: "width: 42px; height: 42px; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 16px rgba(184,115,51,0.1);",
+                    placeholder: "transition: all 0.3s ease;",
                     image: "object-fit: cover; transition: transform 0.3s ease; filter: brightness(1.05) contrast(1.02);"
                 },
                 nameContainer: "display: flex; align-items: center; gap: 8px;",
@@ -349,7 +349,7 @@ export class CreateThemeModal extends Modal {
 
     private addGlobalStylesSettings(container: HTMLElement, styles: any) {
         const section = container.createDiv('global-style-section');
-        
+
         new Setting(section)
             .setName('全局主题色')
             .setDesc('修改此颜色将更新所有文字相关的颜色')
@@ -357,9 +357,21 @@ export class CreateThemeModal extends Modal {
                 const defaultColor = styles.title.h2.content.match(/color:\s*(#[a-fA-F0-9]+)/)?.[1] || '#8b4513';
                 color.setValue(defaultColor)
                     .onChange(value => {
+
+                        styles.header.userName = styles.header.userName.replace(/color:\s*#[a-fA-F0-9]+/, `color: ${value}`);
+                        styles.header.userId = styles.header.userId.replace(/color:\s*#[a-fA-F0-9]+/, `color: ${value}BB`);
+                        styles.header.postTime = styles.header.postTime.replace(/color:\s*#[a-fA-F0-9]+/, `color: ${value}99`);
+                        styles.header.verifiedIcon = styles.header.verifiedIcon
+                            .replace(/background:\s*linear-gradient\([^)]+\)/, `background: linear-gradient(135deg, ${value}, ${value})`)
+                            .replace(/border:\s*1px\s*solid\s*#[a-fA-F0-9]+80/, `border: 1px solid ${value}80`)
+                            .replace(/box-shadow:\s*[^;]+;/, `box-shadow: 0 2px 8px ${value}1a;`);
+                        styles.footer.container = styles.footer.container.replace(/color:\s*#[a-fA-F0-9]+/, `color: ${value}CC`);
+                        styles.footer.container = styles.footer.container.replace(/border-top:\s*1px solid\s*#[a-fA-F0-9]+/, `border-top: 1px solid ${value}40`);
+                        styles.footer.container = styles.footer.container.replace(/background:\s*[^;]+/, `background: linear-gradient(to top, ${value}08, transparent)`);
+
                         // 更新段落颜色
                         styles.paragraph = styles.paragraph.replace(/color:\s*#[a-fA-F0-9]+/, `color: ${value}`);
-                        
+
                         // 更新强调文字颜色
                         Object.keys(styles.emphasis).forEach(key => {
                             styles.emphasis[key] = styles.emphasis[key].replace(/color:\s*#[a-fA-F0-9]+/, `color: ${value}`);
@@ -395,8 +407,8 @@ export class CreateThemeModal extends Modal {
                         ['ref', 'backref'].forEach(key => {
                             styles.footnote[key] = styles.footnote[key].replace(/color:\s*#[a-fA-F0-9]+/, `color: ${value}`);
                         });
-
-                        new Notice('已更新全局颜色');
+                        styles.image = styles.image.replace(/border:\s*1px solid\s*#[a-fA-F0-9]+80/, `border: 1px solid ${value}80`);
+                        
                     });
             });
     }
@@ -559,7 +571,7 @@ export class CreateThemeModal extends Modal {
                         styles.text = `color: inherit; transition: color 0.2s ease; font-style: italic; white-space: nowrap;`;
                         styles.separator = `color: inherit;`;
                     });
-    
+
             });
 
         // 页脚背景设置
@@ -719,7 +731,7 @@ export class CreateThemeModal extends Modal {
                 color.setValue(currentColor)
                     .onChange(value => {
                         styles.quote = styles.quote.replace(/border-left:\s*\d+px\s*solid\s*#[a-fA-F0-9]+/, `border-left: 3px solid ${value}`);
-                        
+
                         // 如果有渐变背景，也更新背景色
                         if (styles.quote.includes('linear-gradient')) {
                             styles.quote = styles.quote.replace(/rgba\([^)]+\)/, `rgba(${parseInt(value.slice(1, 3), 16)},${parseInt(value.slice(3, 5), 16)},${parseInt(value.slice(5, 7), 16)},0.1)`);
@@ -828,7 +840,7 @@ export class CreateThemeModal extends Modal {
                 color.setValue(currentColor)
                     .onChange(value => {
                         styles.link = styles.link.replace(/color:\s*#[a-fA-F0-9]+/, `color: ${value}`);
-                        
+
                         // 如果有下划线渐变，也更新下划线颜色
                         if (styles.link.includes('linear-gradient')) {
                             styles.link = styles.link.replace(/linear-gradient\([^)]+\)/, `linear-gradient(to right, ${value}80, ${value}80)`);
@@ -843,8 +855,8 @@ export class CreateThemeModal extends Modal {
                 dropdown.addOption('none', '无下划线')
                     .addOption('underline', '实线下划线')
                     .addOption('gradient', '渐变下划线')
-                    .setValue(styles.link.includes('text-decoration: none') && !styles.link.includes('background-image') ? 'none' : 
-                              styles.link.includes('text-decoration: underline') ? 'underline' : 'gradient')
+                    .setValue(styles.link.includes('text-decoration: none') && !styles.link.includes('background-image') ? 'none' :
+                        styles.link.includes('text-decoration: underline') ? 'underline' : 'gradient')
                     .onChange(value => {
                         switch (value) {
                             case 'none':
@@ -893,10 +905,10 @@ export class CreateThemeModal extends Modal {
             .addColorPicker(color => {
                 const currentBg = styles.header.match(/background:\s*([^;]+)/)?.[1];
                 // 如果是渐变色，取第一个颜色
-                const firstColor = currentBg.includes('linear-gradient') ? 
-                    currentBg.match(/linear-gradient\([^,]+,\s*(#[a-fA-F0-9]+)/)?.[1] : 
+                const firstColor = currentBg.includes('linear-gradient') ?
+                    currentBg.match(/linear-gradient\([^,]+,\s*(#[a-fA-F0-9]+)/)?.[1] :
                     currentBg;
-                
+
                 color.setValue(firstColor)
                     .onChange(value => {
                         if (currentBg.includes('linear-gradient')) {
