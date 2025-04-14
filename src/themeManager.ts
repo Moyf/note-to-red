@@ -1,9 +1,12 @@
 import { App } from 'obsidian';
-import { templates } from './templates';
+import { SettingsManager } from './settings/settings';
 
-interface Template {
+export interface Theme {
     id: string;
     name: string;
+    description: string;
+    isPreset?: boolean;  // 添加预设主题标识
+    isVisible?: boolean; // 控制主题是否显示
     styles: {
         // 容器基础样式
         imagePreview: string;
@@ -79,66 +82,33 @@ interface Template {
     };
 }
 
-export class TemplateManager {
-    private templates: Map<string, Template> = new Map();
-    private currentTemplate: Template;
+export class ThemeManager {
+    private currentTheme: Theme;
     private currentFont: string = '-apple-system';
     private currentFontSize: number = 16;
     private app: App;
+    private settingsManager: SettingsManager;
 
-    constructor(app: App) {
+    constructor(app: App, settingsManager: SettingsManager) {
         this.app = app;
-        this.loadTemplates(); // 加载模板
+        this.settingsManager = settingsManager;
     }
 
-    public async loadTemplates() {
-        try {
-            // 直接从内置模板加载
-            Object.values(templates).forEach(template => {
-                this.templates.set(template.id, template);
-                if (template.id === 'default') {
-                    this.currentTemplate = template;
-                }
-            });
-        } catch (error) {
-            console.error('加载模板失败:', error);
-            throw new Error('无法加载模板文件');
-        }
-    }
-
-    public getTemplate(id: string): Template | undefined {
-        return this.templates.get(id);
-    }
-
-    public getCurrentTemplate(): Template {
-        return this.currentTemplate;
-    }
-
-    public setCurrentTemplate(id: string): boolean {
-        const template = this.templates.get(id);
-        if (template) {
-            this.currentTemplate = template;
+    public setCurrentTheme(id: string): boolean {
+        const theme = this.settingsManager.getTheme(id);
+        if (theme) {
+            this.currentTheme = theme;
             return true;
         }
+        console.error('主题未找到:', id);
         return false;
     }
 
-    public getAllTemplates(): Template[] {
-        return Array.from(this.templates.values());
-    }
-
-    public setFont(fontFamily: string) {
-        this.currentFont = fontFamily;
-    }
-
-    public setFontSize(size: number) {
-        this.currentFontSize = size;
-    }
-
-    // 修改 applyTemplate 方法
-    public applyTemplate(element: HTMLElement): void {
-        const styles = this.currentTemplate.styles;
+    // 修改 applyTheme 方法
+    public applyTheme(element: HTMLElement): void {
         
+        const styles = this.currentTheme.styles;
+
         // 修改应用基础样式的方式
         const imagePreview = element.querySelector('.red-image-preview');
         if (imagePreview) {
@@ -201,7 +171,7 @@ export class TemplateManager {
                 el.setAttribute('style', styles.footer.separator);
             });
         }
-        
+
         // 应用标题样式
         ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].forEach(tag => {
             element.querySelectorAll(tag).forEach(el => {
@@ -209,12 +179,12 @@ export class TemplateManager {
                 if (!el.querySelector('.content')) {
                     const content = document.createElement('span');
                     content.className = 'content';
-                    
+
                     // 将原有内容移动到新的 span 中
                     while (el.firstChild) {
                         content.appendChild(el.firstChild);
                     }
-                    
+
                     el.appendChild(content);
 
                     const after = document.createElement('span');
@@ -315,6 +285,15 @@ export class TemplateManager {
             }
         });
     }
+
+    // 移除不再需要的方法
+    public setFont(fontFamily: string) {
+        this.currentFont = fontFamily;
+    }
+
+    public setFontSize(size: number) {
+        this.currentFontSize = size;
+    }
 }
 
-export const templateManager = (app: App) => new TemplateManager(app);
+export const themeManager = (app: App, settingsManager: SettingsManager) => new ThemeManager(app, settingsManager);

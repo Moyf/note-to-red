@@ -10,30 +10,30 @@
                 "image": "object-fit: cover; transition: transform 0.3s ease; filter: brightness(1.05) contrast(1.02);"
             },
             "nameContainer": "display: flex; align-items: center; gap: 8px;",
-            "userName": "font-size: 17px; font-weight: 600; color: #8b4513; font-family: 'Noto Serif SC', serif; text-shadow: 0 2px 4px rgba(139,69,19,0.1);",
+            "userName": "font-size: 17px; font-weight: 600; color: #8b4513; serif; text-shadow: 0 2px 4px rgba(139,69,19,0.1);",
             "userId": "font-size: 14px; color: #b87333; font-family: 'Noto Serif SC', serif;",
             "postTime": "font-size: 13px; color: #d2691e; font-style: italic;",
             "verifiedIcon": "width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; color: #fffaf5; background: linear-gradient(135deg, #d2691e, #b87333); border-radius: 50%; font-size: 10px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(210,105,30,0.2); border: 1px solid #b8733380;"
         },
         "footer": {
-            "container": "position: absolute; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 14px; padding: 16px; color: #b87333; font-size: 13px; border-top: 1px solid #b8733380; background: rgba(255,250,245,0.95); backdrop-filter: blur(8px); font-family: 'Noto Serif SC', serif;",
+            "container": "position: absolute; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 14px; padding: 16px; color: #b87333; font-size: 13px; border-top: 1px solid #b8733380; background: rgba(255,250,245,0.95); backdrop-filter: blur(8px);",
             "text": "color: inherit; transition: color 0.2s ease; font-style: italic; white-space: nowrap;",
             "separator": "color: #deb887;"
         },
         "title": {
             "h2": {
-                "base": "margin: 0; font-size: 1.6em; letter-spacing: 0.01em; line-height: 1.5;",
-                "content": "font-weight: 600; color: #8b4513; font-family: 'Noto Serif SC', serif;",
+                "base": "margin: 10px 0 0; font-size: 1.6em; letter-spacing: 0.01em; line-height: 1.5;",
+                "content": "font-weight: 600; color: #8b4513; ",
                 "after": ""
             },
             "h3": {
-                "base": "margin: 28px 0 0; font-size: 1.3em; line-height: 1.5;",
-                "content": "font-weight: 600; color: #8b4513; font-family: 'Noto Serif SC', serif;",
+                "base": "margin: 8px 0 0; font-size: 1.3em; line-height: 1.5;",
+                "content": "font-weight: 600; color: #8b4513; ",
                 "after": ""
             },
             "base": {
-                "base": "margin: 24px 0 0; font-size: 1.15em; line-height: 1.5;",
-                "content": "font-weight: 600; color: #8b4513; font-family: 'Noto Serif SC', serif;",
+                "base": "margin: 6px 0 0; font-size: 1.15em; line-height: 1.5;",
+                "content": "font-weight: 600; color: #8b4513;",
                 "after": ""
             }
         },

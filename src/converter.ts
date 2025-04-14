@@ -45,6 +45,16 @@ export class RedConverter {
         // 创建图片预览区域
         const imagePreview = document.createElement('div');
         imagePreview.className = 'red-image-preview';
+        
+        // 创建复制按钮
+        const copyButton = document.createElement('button');
+        copyButton.className = 'red-copy-button';
+        copyButton.innerHTML = '<?xml version="1.0" encoding="UTF-8"?><svg width="20" height="20" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 12.4316V7.8125C13 6.2592 14.2592 5 15.8125 5H40.1875C41.7408 5 43 6.2592 43 7.8125V32.1875C43 33.7408 41.7408 35 40.1875 35H35.5163" stroke="#9b9b9b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M32.1875 13H7.8125C6.2592 13 5 14.2592 5 15.8125V40.1875C5 41.7408 6.2592 43 7.8125 43H32.1875C33.7408 43 35 41.7408 35 40.1875V15.8125C35 14.2592 33.7408 13 32.1875 13Z" fill="none" stroke="#9b9b9b" stroke-width="4" stroke-linejoin="round"/></svg>';
+        copyButton.title = '复制图片';
+        copyButton.setAttribute('aria-label', '复制图片到剪贴板');
+        
+        // 添加复制按钮到预览容器
+        previewContainer.appendChild(copyButton);
 
         // 创建三个主要区域
         const headerArea = document.createElement('div');
@@ -78,6 +88,13 @@ export class RedConverter {
         // 处理完成后再清空原容器并添加新内容
         element.empty();
         element.appendChild(previewContainer);
+
+        // 触发自定义事件，通知 view 添加复制按钮事件监听
+        const copyEvent = new CustomEvent('copy-button-added', { 
+            detail: { copyButton },
+            bubbles: true 
+        });
+        element.dispatchEvent(copyEvent);
     }
 
     private static createContentSection(header: Element, index: number): HTMLElement | null {
