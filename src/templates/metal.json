@@ -2,7 +2,7 @@
     "id": "metal",
     "name": "金属科技",
     "styles": {
-        "imagePreview": "background-color: #1e2228; padding: 32px 28px; border: 1px solid #4d4d4d80;",
+        "imagePreview": "background-color: #1e2228; padding: 32px 28px;",
         "header": {
             "avatar": {
                 "container": "width: 40px; height: 40px; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 16px rgba(192,192,192,0.3); border: 1px solid #4d4d4d80;",
