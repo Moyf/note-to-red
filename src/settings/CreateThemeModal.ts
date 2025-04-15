@@ -104,7 +104,6 @@ export class CreateThemeModal extends Modal {
 
         // 创建主题名称输入区域（在头部）
         const nameContainer = headerEl.createDiv('name-container');
-        console.log(this.existingTheme);
         if (!this.existingTheme) {
             new Setting(nameContainer)
                 .setName('是否选择参考模板')

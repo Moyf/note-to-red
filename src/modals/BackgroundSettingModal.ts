@@ -197,6 +197,8 @@ export class BackgroundSettingModal extends Modal {
             });
         } else if (!applyBackground && this.initialSettings?.imageUrl) {
             this.applyBackgroundStyles(previewContainer as HTMLElement, this.initialSettings);
+        } else {
+            this.backgroundManager.clearBackgroundStyles(previewContainer as HTMLElement);
         }
     }
 
@@ -208,7 +210,7 @@ export class BackgroundSettingModal extends Modal {
         if (this.previewImage) {
             this.previewImage.setAttribute('style', '');
         }
-        
+
         // 更新目标预览并清除设置
         const previewContainer = this.targetPreviewEl.querySelector('.red-image-preview');
         if (previewContainer) {
