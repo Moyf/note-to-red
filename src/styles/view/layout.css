@@ -30,7 +30,6 @@
     background: var(--background-primary-alt);
     border-radius: 12px;
     padding: 20px;
-    overflow: auto;
 }
 .red-preview-header{
     padding-bottom: 10px;

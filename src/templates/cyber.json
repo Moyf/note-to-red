@@ -2,7 +2,7 @@
     "id": "cyber",
     "name": "赛博朋克",
     "styles": {
-        "imagePreview": "background: #ffffff; padding: 32px 28px; border-radius: 12px; box-shadow: 0 0 20px rgba(255, 0, 255, 0.15); border: 1px solid rgba(0, 255, 255, 0.2); background-image: linear-gradient(135deg, rgba(255, 0, 255, 0.05) 25%, transparent 25%, transparent 50%, rgba(255, 0, 255, 0.05) 50%, rgba(255, 0, 255, 0.05) 75%, transparent 75%, transparent);",
+        "imagePreview": "background-color: #ffffff; padding: 32px 28px; border-radius: 12px; box-shadow: 0 0 20px rgba(255, 0, 255, 0.15); border: 1px solid rgba(0, 255, 255, 0.2);",
     
         "header": {
           "container": "margin-bottom: 10px;",

@@ -21,7 +21,7 @@ export class CreateThemeModal extends Modal {
 
     private initializeStyles(): any {
         return {
-            imagePreview: "background: #fffaf5; padding: 32px 28px;",
+            imagePreview: "background-color: #fffaf5; padding: 32px 28px;",
             header: {
                 avatar: {
                     container: "width: 42px; height: 42px; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 16px rgba(184,115,51,0.1);",
