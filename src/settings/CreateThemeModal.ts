@@ -1,16 +1,22 @@
 import { App, Modal, Setting, Notice, setIcon } from 'obsidian';
 import { Theme } from '../themeManager';
-
+import RedPlugin from '../main';
 export class CreateThemeModal extends Modal {
     theme: Theme;
     onSubmit: (theme: Theme) => void;
     private nameInput: HTMLInputElement;
-
-    constructor(app: App, onSubmit: (theme: Theme) => void, existingTheme?: Theme) {
+    private plugin: RedPlugin;
+    private themeSelect: HTMLSelectElement;
+    private showSampleTemplate = false;
+    private existingTheme: Theme | undefined;
+    constructor(app: App, plugin: RedPlugin, onSubmit: (theme: Theme) => void, existingTheme?: Theme) {
         super(app);
+        this.plugin = plugin;
+        this.existingTheme = existingTheme;
         this.onSubmit = onSubmit;
+
         this.theme = existingTheme ? { ...existingTheme } : {
-            id: this.generateThemeId('未命名主题'),
+            id: '',
             name: '',
             description: '',
             isPreset: false,
@@ -98,6 +104,36 @@ export class CreateThemeModal extends Modal {
 
         // 创建主题名称输入区域（在头部）
         const nameContainer = headerEl.createDiv('name-container');
+        console.log(this.existingTheme);
+        if (!this.existingTheme) {
+            new Setting(nameContainer)
+                .setName('是否选择参考模板')
+                .addToggle(toggle => {
+                    toggle.setValue(this.showSampleTemplate)
+                        .onChange(value => {
+                            this.showSampleTemplate = value;
+                            this.themeSelect.style.display = this.showSampleTemplate ? 'block' : 'none';
+                        });
+                });
+
+            // 添加选择框
+            new Setting(nameContainer)
+                .setName('选择参考模板')
+                .addDropdown(dropdown => {
+                    this.themeSelect = dropdown
+                        .addOptions(this.getThemeOptions()) // 获取所有主题选项
+                        .setValue(this.theme.id)
+                        .onChange(value => {
+                            const selectedTheme = this.getThemeById(value);
+                            if (selectedTheme) {
+                                this.theme = { ...selectedTheme, id: '', name: '', description: '', isPreset: false };
+                            }
+                        })
+                        .selectEl;
+                    this.themeSelect.style.display = this.showSampleTemplate ? 'block' : 'none'; // 默认隐藏
+                });
+        }
+        // 创建主题名称输入区域（在头部）
         new Setting(nameContainer)
             .setName('主题名称')
             .addText(text => {
@@ -175,6 +211,19 @@ export class CreateThemeModal extends Modal {
                 }
             }
         });
+    }
+
+    private getThemeOptions(): Record<string, string> {
+        const themes = this.plugin.settingsManager.getAllThemes();
+        const options: Record<string, string> = {};
+        themes.forEach(theme => {
+            options[theme.id] = theme.name;
+        });
+        return options;
+    }
+
+    private getThemeById(id: string): Theme | undefined {
+        return this.plugin.settingsManager.getAllThemes().find(theme => theme.id === id);
     }
 
     private addStyleSettings(container: HTMLElement, sectionName: string, styles: any) {
@@ -323,10 +372,16 @@ export class CreateThemeModal extends Modal {
 
     private async validateAndSubmit(): Promise<boolean> {
         const trimmedName = this.theme.name.trim();
-
         if (!trimmedName) {
             new Notice('主题名称不能为空');
             this.nameInput.focus();
+            return false;
+        }
+
+        // 检查是否选择了样本模板
+        if (this.showSampleTemplate && !this.themeSelect.value) {
+            new Notice('请选择一个参考模板');
+            this.themeSelect.focus();
             return false;
         }
 
@@ -646,26 +701,26 @@ export class CreateThemeModal extends Modal {
                     });
             });
 
-            const emphasisSection = container.createDiv('style-section'); // 修改为 style-section
+        const emphasisSection = container.createDiv('style-section'); // 修改为 style-section
 
-            // 创建折叠面板标题区域
-            const emphasisHeader = emphasisSection.createDiv('style-section-header');
-            const emphasisTitleContainer = emphasisHeader.createDiv('style-section-title');
-            const emphasisToggle = emphasisTitleContainer.createSpan('style-section-toggle');
-            setIcon(emphasisToggle, 'chevron-right');
-            emphasisTitleContainer.createEl('h4', { text: '强调样式' });
-    
-            // 创建内容区域
-            const emphasisContent = emphasisSection.createDiv('style-section-content');
-            emphasisContent.style.display = 'none'; // 初始状态为折叠
-    
-            emphasisHeader.addEventListener('click', () => {
-                const isExpanded = emphasisContent.style.display === 'none';
-                emphasisContent.style.display = isExpanded ? 'block' : 'none';
-                setIcon(emphasisToggle, isExpanded ? 'chevron-down' : 'chevron-right');
-            });
-    
-            new Setting(emphasisContent)
+        // 创建折叠面板标题区域
+        const emphasisHeader = emphasisSection.createDiv('style-section-header');
+        const emphasisTitleContainer = emphasisHeader.createDiv('style-section-title');
+        const emphasisToggle = emphasisTitleContainer.createSpan('style-section-toggle');
+        setIcon(emphasisToggle, 'chevron-right');
+        emphasisTitleContainer.createEl('h4', { text: '强调样式' });
+
+        // 创建内容区域
+        const emphasisContent = emphasisSection.createDiv('style-section-content');
+        emphasisContent.style.display = 'none'; // 初始状态为折叠
+
+        emphasisHeader.addEventListener('click', () => {
+            const isExpanded = emphasisContent.style.display === 'none';
+            emphasisContent.style.display = isExpanded ? 'block' : 'none';
+            setIcon(emphasisToggle, isExpanded ? 'chevron-down' : 'chevron-right');
+        });
+
+        new Setting(emphasisContent)
             .setName('粗体样式')
             .setDesc('设置粗体文本的样式')
             .addColorPicker(color => {
