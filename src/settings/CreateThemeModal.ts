@@ -515,7 +515,7 @@ export class CreateThemeModal extends Modal {
                     .onChange(value => {
                         // 清除除背景色外的所有样式
                         Array.from(styleMap.keys()).forEach(key => {
-                            if (key !== 'background') {
+                            if (key !== 'background-color') {
                                 styleMap.delete(key);
                             }
                         });
