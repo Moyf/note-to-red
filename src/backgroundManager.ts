@@ -1,43 +1,31 @@
-import { backgrounds } from './backgrounds';
-
-export interface Background {
-    id: string;
-    name: string;
-    style: string;
-}
+import { BackgroundSettings } from './modals/BackgroundSettingModal';
 
 export class BackgroundManager {
-    private backgrounds: Background[];
-    private currentBackground: Background | null = null;
+    constructor() {}
 
-    constructor() {
-        this.backgrounds = backgrounds.backgrounds;
+    public applyBackgroundStyles(element: HTMLElement, settings: BackgroundSettings) {
+        const stylesArray = [
+            `background-image: url(${settings.imageUrl})`,
+            `background-size: ${settings.scale * 100}%`,
+            `background-position: ${settings.position.x}px ${settings.position.y}px`,
+            `background-repeat: no-repeat`
+        ];
+
+        stylesArray.forEach(style => {
+            const match = style.match(/([^:]+):(.+)/);
+            if (match) {
+                const [, key, value] = match.map(item => item.trim());
+                if (key && value) {
+                    element.style[key as any] = value;
+                }
+            }
+        });
     }
 
-    public getAllBackgrounds(): Background[] {
-        return this.backgrounds;
-    }
-
-    public setBackground(id: string | null) {
-        if (!id) {
-            this.currentBackground = null;
-            return;
-        }
-        const background = this.backgrounds.find(bg => bg.id === id);
-        if (background) {
-            this.currentBackground = background;
-        }
-    }
-
-    public applyBackground(element: HTMLElement) {
-        // 修改选择器为目标预览容器
-        const previewContainer = element.querySelector('.red-image-preview');
-        if (!previewContainer) return;
-
-        if (!this.currentBackground) {
-            previewContainer.setAttribute('style', '');  // 清除样式
-            return;
-        }
-        previewContainer.setAttribute('style', this.currentBackground.style);
+    public clearBackgroundStyles(element: HTMLElement) {
+        const style = element.getAttribute('style') || '';
+        // 只清除特定的四个背景样式属性
+        const clearedStyle = style.replace(/background-image:[^;]+;|background-size:[^;]+;|background-position:[^;]+;|background-repeat:[^;]+;/g, '');
+        element.setAttribute('style', clearedStyle);
     }
 }

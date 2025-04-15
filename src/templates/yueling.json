@@ -2,7 +2,7 @@
     "id": "yueling",
     "name": "悦灵雅棕",
     "styles": {
-        "imagePreview": "background: #1c1c1e; padding: 28px 24px;",
+        "imagePreview": "background-color: #1c1c1e; padding: 28px 24px;",
         "header": {
             "avatar": {
                 "container": "width: 40px; height: 40px; border-radius: 12px; overflow: hidden;",

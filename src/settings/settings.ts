@@ -18,6 +18,11 @@ interface RedSettings {
     footerLeftText: string;
     footerRightText: string;
     customFonts: { value: string; label: string; isPreset?: boolean }[];  // 添加自定义字体配置
+    backgroundSettings: {
+        imageUrl: string;
+        scale: number;
+        position: { x: number; y: number };
+    };
 }
 
 export const DEFAULT_SETTINGS: RedSettings = {
@@ -63,6 +68,11 @@ export const DEFAULT_SETTINGS: RedSettings = {
             isPreset: true
         }
     ],
+    backgroundSettings: {
+        imageUrl: '',
+        scale: 1,
+        position: { x: 0, y: 0 }
+    },
 }
 
 export class SettingsManager extends EventEmitter {

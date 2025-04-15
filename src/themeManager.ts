@@ -106,13 +106,18 @@ export class ThemeManager {
 
     // 修改 applyTheme 方法
     public applyTheme(element: HTMLElement): void {
-        
         const styles = this.currentTheme.styles;
 
         // 修改应用基础样式的方式
-        const imagePreview = element.querySelector('.red-image-preview');
+        const imagePreview = element.querySelector('.red-image-preview') as HTMLElement;
         if (imagePreview) {
-            imagePreview.setAttribute('style', styles.imagePreview);
+            const styleProperties = styles.imagePreview.split(';');
+            styleProperties.forEach(property => {
+                const [key, value] = property.split(':').map(item => item.trim());
+                if (key && value) {
+                    imagePreview.style[key as any] = value; // 使用 as any 绕过 TypeScript 的类型检查
+                }
+            });
         }
 
         // 应用页眉样式

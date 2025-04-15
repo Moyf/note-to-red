@@ -1,4 +1,4 @@
-import { ItemView, WorkspaceLeaf, MarkdownRenderer, TFile, Notice } from 'obsidian';
+import { ItemView, WorkspaceLeaf, MarkdownRenderer, TFile, Notice, setIcon } from 'obsidian';
 import { RedConverter } from './converter';
 import { DownloadManager } from './downloadManager';
 import type { ThemeManager } from './themeManager';
@@ -6,7 +6,8 @@ import { DonateManager } from './donateManager';
 import type { SettingsManager } from './settings/settings';
 import { ClipboardManager } from './clipboardManager';
 import { ImgTemplateManager } from './imgTemplateManager';
-
+import { BackgroundSettingModal } from './modals/BackgroundSettingModal';
+import { BackgroundManager } from './backgroundManager';
 export const VIEW_TYPE_RED = 'note-to-red';
 
 export class RedView extends ItemView {
@@ -16,6 +17,7 @@ export class RedView extends ItemView {
     private updateTimer: number | null = null;
     private isPreviewLocked: boolean = false;
     private currentImageIndex: number = 0;
+    private backgroundManager: BackgroundManager;
 
     // UI 元素
     private lockButton: HTMLButtonElement;
@@ -45,6 +47,7 @@ export class RedView extends ItemView {
         super(leaf);
         this.themeManager = themeManager;
         this.settingsManager = settingsManager;
+        this.backgroundManager = new BackgroundManager();
         this.imgTemplateManager = new ImgTemplateManager(
             this.settingsManager,
             this.updatePreview.bind(this),
@@ -92,13 +95,40 @@ export class RedView extends ItemView {
         await this.restoreSettings();
     }
 
+    // 添加背景设置按钮初始化方法
+    private async initializeBackgroundButton(parent: HTMLElement) {
+        const bgButton = parent.createEl('button', {
+            cls: 'red-background-button',
+            attr: { 'aria-label': '设置背景图片' }
+        });
+        setIcon(bgButton, 'image');
+
+        bgButton.addEventListener('click', () => {
+            const currentSettings = this.settingsManager.getSettings().backgroundSettings;
+            new BackgroundSettingModal(
+                this.app,
+                async (backgroundSettings) => {
+                    await this.settingsManager.updateSettings({ backgroundSettings });
+                    const imagePreview = this.previewEl.querySelector('.red-image-preview') as HTMLElement;
+                    this.backgroundManager.applyBackgroundStyles(
+                        imagePreview,
+                        backgroundSettings
+                    );
+                },
+                this.previewEl,
+                this.backgroundManager,
+                currentSettings
+            ).open();
+        });
+    }
+
     private initializePreviewArea(container: HTMLElement) {
         const wrapper = container.createEl('div', { cls: 'red-preview-wrapper' });
         this.previewEl = wrapper.createEl('div', { cls: 'red-preview-container' });
-        
+
         // 创建导航容器
         const navContainer = wrapper.createEl('div', { cls: 'red-nav-container' });
-        
+
         const prevButton = navContainer.createEl('button', {
             cls: 'red-nav-button',
             text: '←'
@@ -115,7 +145,7 @@ export class RedView extends ItemView {
         });
 
         this.navigationButtons = { prev: prevButton, next: nextButton, indicator };
-        
+
         prevButton.addEventListener('click', () => this.navigateImages('prev'));
         nextButton.addEventListener('click', () => this.navigateImages('next'));
     }
@@ -148,6 +178,7 @@ export class RedView extends ItemView {
         const bottomControlsGroup = bottomBar.createEl('div', { cls: 'red-controls-group' });
 
         this.initializeHelpButton(bottomControlsGroup);
+        this.initializeBackgroundButton(bottomControlsGroup);
         this.initializeDonateButton(bottomControlsGroup);
         this.initializeExportButtons(bottomControlsGroup);
     }
@@ -167,9 +198,9 @@ export class RedView extends ItemView {
     private async initializeLockButton(parent: HTMLElement) {
         this.lockButton = parent.createEl('button', {
             cls: 'red-lock-button',
-            text: '🔓',
             attr: { 'aria-label': '关闭实时预览状态' }
         });
+        setIcon(this.lockButton, 'lock');
         this.lockButton.addEventListener('click', () => this.togglePreviewLock());
     }
 
@@ -224,7 +255,7 @@ export class RedView extends ItemView {
 
     private async initializeFontSizeControls(parent: HTMLElement) {
         const fontSizeGroup = parent.createEl('div', { cls: 'red-font-size-group' });
-        
+
         const decreaseButton = fontSizeGroup.createEl('button', {
             cls: 'red-font-size-btn',
             text: '-'
@@ -271,11 +302,11 @@ export class RedView extends ItemView {
     }
 
     private initializeHelpButton(parent: HTMLElement) {
-        parent.createEl('button', {
+        const helpButton = parent.createEl('button', {
             cls: 'red-help-button',
-            text: '❓',
             attr: { 'aria-label': '使用指南' }
         });
+        setIcon(helpButton, 'help');
 
         parent.createEl('div', {
             cls: 'red-help-tooltip',
@@ -485,6 +516,14 @@ export class RedView extends ItemView {
         if (hasValidContent) {
             // 应用当前模板
             this.imgTemplateManager.applyTemplate(this.previewEl, this.settingsManager.getSettings());
+            // 应用当前背景设置
+            const settings = this.settingsManager.getSettings();
+            if (settings.backgroundSettings.imageUrl) {
+                const previewContainer = this.previewEl.querySelector('.red-image-preview');
+                if (previewContainer) {
+                    this.backgroundManager.applyBackgroundStyles(previewContainer as HTMLElement, settings.backgroundSettings);
+                }
+            }
         }
 
         this.updateControlsState(hasValidContent);
@@ -546,7 +585,7 @@ export class RedView extends ItemView {
 
         this.updateControlsState(true);
         this.isPreviewLocked = false;
-        this.lockButton.setText('🔓');
+        setIcon(this.lockButton, 'unlock');
         await this.updatePreview();
     }
 
@@ -563,9 +602,9 @@ export class RedView extends ItemView {
 
     private async togglePreviewLock() {
         this.isPreviewLocked = !this.isPreviewLocked;
-        const lockIcon = this.isPreviewLocked ? '🔒' : '🔓';
+        const lockIcon = this.isPreviewLocked ? 'lock' : 'unlock';
         const lockStatus = this.isPreviewLocked ? '开启实时预览状态' : '关闭实时预览状态';
-        this.lockButton.setText(lockIcon);
+        setIcon(this.lockButton, lockIcon);
         this.lockButton.setAttribute('aria-label', lockStatus);
 
         if (!this.isPreviewLocked) {
@@ -634,7 +673,7 @@ export class RedView extends ItemView {
     private async getTemplateOptions() {
         return this.imgTemplateManager.getImgTemplateOptions();
     }
-    
+
     private getFontOptions() {
         return this.settingsManager.getFontOptions();
     }

@@ -2,7 +2,7 @@
     "id": "elegant",
     "name": "优雅暗色",
     "styles": {
-        "imagePreview": "background: #1a1721; padding: 32px 28px;",
+        "imagePreview": "background-color: #1a1721; padding: 32px 28px;",
         "header": {
             "avatar": {
                 "container": "width: 40px; height: 40px; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 8px rgba(180,144,255,0.15);",

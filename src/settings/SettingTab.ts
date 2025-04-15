@@ -74,6 +74,7 @@ export class RedSettingTab extends PluginSettingTab {
                             .onClick(() => {
                                 new CreateThemeModal(
                                     this.app,
+                                    this.plugin,
                                     (updatedTheme) => {
                                         this.plugin.settingsManager.updateTheme(theme.id, updatedTheme);
                                         this.display();
@@ -108,6 +109,7 @@ export class RedSettingTab extends PluginSettingTab {
                 .onClick(() => {
                     new CreateThemeModal(
                         this.app,
+                        this.plugin,
                         async (newTheme) => {
                             await this.plugin.settingsManager.addCustomTheme(newTheme);
                             this.display();
