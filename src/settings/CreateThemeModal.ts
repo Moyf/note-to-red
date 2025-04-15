@@ -487,11 +487,11 @@ export class CreateThemeModal extends Modal {
             .setDesc('设置内容区域的背景颜色，建议使用浅色以保证文字清晰可见')
             .addColorPicker(color => {
                 // 获取当前背景颜色值
-                const currentBg = styleMap.get('background') || '#fffaf5';
+                const currentBg = styleMap.get('background-color') || '#fffaf5';
                 color.setValue(currentBg)
                     .onChange(value => {
                         // 更新样式映射
-                        styleMap.set('background', value);
+                        styleMap.set('background-color', value);
 
                         // 重新构建样式字符串
                         this.theme.styles.imagePreview = Array.from(styleMap.entries())
@@ -506,7 +506,7 @@ export class CreateThemeModal extends Modal {
             .setDesc('可以添加自定义的CSS样式，如内边距、边框等。例如：padding: 32px 28px; border: 1px solid #ccc;')
             .addTextArea(text => {
                 const customStyles = Array.from(styleMap.entries())
-                    .filter(([prop]) => prop !== 'background') // 排除背景色设置
+                    .filter(([prop]) => prop !== 'background-color') // 排除背景色设置
                     .map(([prop, val]) => `${prop}: ${val}`)
                     .join('; ');
 
