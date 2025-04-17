@@ -1,5 +1,6 @@
 import { App, Modal, Setting } from 'obsidian';
 import { BackgroundManager } from '../backgroundManager';
+import { builtinBg1, builtinBg2, builtinBg3, builtinBg4, builtinBg5, builtinBg6 } from '../assets/backgrounds/builtinBackgrounds';
 export interface BackgroundSettings {
     imageUrl: string;
     scale: number;
@@ -38,16 +39,38 @@ export class BackgroundSettingModal extends Modal {
     onOpen() {
         const { contentEl } = this;
         contentEl.empty();
-
+    
         const container = contentEl.createEl('div', { cls: 'red-background-container' });
         container.createEl('h3', { text: '背景图片', cls: 'red-background-title' });
-
+    
+        // 内置背景选择区
+        const builtInBgArea = container.createEl('div', { cls: 'red-background-builtins' });
+        const builtInImages = [builtinBg1, builtinBg2, builtinBg3, builtinBg4, builtinBg5, builtinBg6];
+        builtInImages.forEach(src => {
+            const thumb = builtInBgArea.createEl('img', { attr: { src }, cls: 'red-bg-thumb' });
+            thumb.addEventListener('click', () => {
+                this.imageUrl = src;
+                this.scale = 1;
+                this.position = { x: 0, y: 0 };
+                if (this.previewImage) {
+                    this.applyBackgroundStyles(this.previewImage, {
+                        imageUrl: this.imageUrl,
+                        scale: this.scale,
+                        position: this.position
+                    });
+                    this.initDragAndScale();
+                }
+                // 新增：同步更新主预览区
+                this.updateTargetPreview(true);
+            });
+        });
+    
         const previewArea = container.createEl('div', { cls: 'red-background-preview' });
         this.previewImage = previewArea.createEl('div', { cls: 'red-background-preview-image' });
-
+    
         const controlsArea = container.createEl('div', { cls: 'red-background-controls' });
         this.createControls(controlsArea);
-
+    
         if (this.imageUrl) {
             this.applyBackgroundStyles(this.previewImage, {
                 imageUrl: this.imageUrl,
@@ -103,6 +126,8 @@ export class BackgroundSettingModal extends Modal {
                         });
                         this.initDragAndScale();
                     }
+                    // 新增：同步更新主预览区
+                    this.updateTargetPreview(true);
                 };
                 reader.readAsDataURL(file);
             }
