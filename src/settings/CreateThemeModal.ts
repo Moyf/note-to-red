@@ -550,22 +550,48 @@ export class CreateThemeModal extends Modal {
                 const currentColor = styles.userName.match(/color:\s*(#[a-fA-F0-9]+)/)?.[1];
                 color.setValue(currentColor)
                     .onChange(value => {
-                        // 更新所有颜色相关的样式
                         ['userName', 'userId', 'postTime'].forEach(key => {
                             styles[key] = styles[key].replace(/color:\s*#[a-fA-F0-9]+/, `color: ${value}`);
                         });
-
-                        // 更新验证图标
-                        styles.verifiedIcon = styles.verifiedIcon
-                            .replace(/background:\s*linear-gradient\([^)]+\)/, `background: linear-gradient(135deg, ${value}, ${value})`)
-                            .replace(/border:\s*1px solid\s*#[a-fA-F0-9]+80/, `border: 1px solid ${value}80`);
-
-                        // 更新头像容器
                         styles.avatar.container = styles.avatar.container
                             .replace(/box-shadow:\s*0\s*4px\s*16px\s*[^;]+/, `box-shadow: 0 4px 16px ${value}1a`)
                             .replace(/border:\s*1px solid\s*#[a-fA-F0-9]+80/, `border: 1px solid ${value}80`);
                     });
             });
+    
+            new Setting(headerSection)
+        .setName('认证图标颜色')
+        .setDesc('设置认证（已验证）图标的主色')
+        .addColorPicker(color => {
+            // 兼容 background: linear-gradient(...) 和 background-color: ...
+            let currentColor = '#b87333';
+            const bgMatch = styles.verifiedIcon.match(/background:\s*linear-gradient\([^,]+,\s*(#[a-fA-F0-9]+)/);
+            if (bgMatch) {
+                currentColor = bgMatch[1];
+            } else {
+                const colorMatch = styles.verifiedIcon.match(/background-color:\s*(#[a-fA-F0-9]+)/);
+                if (colorMatch) {
+                    currentColor = colorMatch[1];
+                }
+            }
+            color.setValue(currentColor)
+                .onChange(value => {
+                    // 先处理 linear-gradient
+                    if (styles.verifiedIcon.includes('linear-gradient')) {
+                        styles.verifiedIcon = styles.verifiedIcon
+                            .replace(/background:\s*linear-gradient\([^)]+\)/, `background: linear-gradient(135deg, ${value}, ${value})`);
+                    }
+                    // 再处理 background-color
+                    if (styles.verifiedIcon.includes('background-color')) {
+                        styles.verifiedIcon = styles.verifiedIcon
+                            .replace(/background-color:\s*#[a-fA-F0-9]+/, `background-color: ${value}`);
+                    }
+                    // 统一处理 border 和 box-shadow
+                    styles.verifiedIcon = styles.verifiedIcon
+                        .replace(/border:\s*1px solid\s*#[a-fA-F0-9]+80/, `border: 1px solid ${value}80`)
+                        .replace(/box-shadow:\s*0 2px 8px [^;]+;/, `box-shadow: 0 2px 8px ${value}1a;`);
+                });
+        });
     }
 
     private addTitleSettings(container: HTMLElement, styles: any) {
