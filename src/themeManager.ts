@@ -107,7 +107,6 @@ export class ThemeManager {
     // 修改 applyTheme 方法
     public applyTheme(element: HTMLElement): void {
         const styles = this.currentTheme.styles;
-
         // 修改应用基础样式的方式
         const imagePreview = element.querySelector('.red-image-preview') as HTMLElement;
         if (imagePreview) {
@@ -178,7 +177,7 @@ export class ThemeManager {
         }
 
         // 应用标题样式
-        ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].forEach(tag => {
+        ['h2', 'h3', 'h4', 'h5', 'h6'].forEach(tag => {
             element.querySelectorAll(tag).forEach(el => {
                 // 检查是否已经处理过
                 if (!el.querySelector('.content')) {
