@@ -1,7 +1,7 @@
 # Note to RED
 一键将 Obsidian 笔记转换为小红书图片格式的插件。
 
-![downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=brightgreen&labelColor=be2a3c&label=downloads&query=%24%5B%22note-to-red%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json&style=flat) ![version](https://img.shields.io/github/v/tag/Yeban8090/note-to-red?color=blue&labelColor=9c2437&label=version&style=flat) ![license](https://img.shields.io/badge/license-MIT-green) [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-支持作者-yellow)](https://ko-fi.com/bruceyeban)
+![downloads](https://img.shields.io/badge/dynamic/json?color=brightgreen&label=downloads&query=%24%5B%22note-to-red%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json&style=flat) ![version](https://img.shields.io/github/v/tag/Yeban8090/note-to-red?color=blue&label=version&style=flat) ![license](https://img.shields.io/badge/license-MIT-green) [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-支持作者-yellow)](https://ko-fi.com/bruceyeban)
 
 ## 功能特点
 - 📝 使用二级标题分割内容，每个标题自动生成一张配图
