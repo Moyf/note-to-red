@@ -1,7 +1,7 @@
 # Note to RED
 一键将 Obsidian 笔记转换为小红书图片格式的插件。
 
-<img src="https://img.shields.io/badge/dynamic/json?logo=obsidian&color=363636&labelColor=be2a3c&label=Downloads&query=%24%5B%22note-to-red%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json&style=flat" alt="Downloads Badge">
+<img src="https://img.shields.io/badge/dynamic/json?logo=obsidian&color=363636&labelColor=be2a3c&label=downloads&query=%24%5B%22note-to-red%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json&style=flat" alt="downloads">
 <img src="https://img.shields.io/badge/version-1.0.6-blue" alt="version">
 <img src="https://img.shields.io/badge/license-MIT-green" alt="license">
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-支持作者-yellow)](https://ko-fi.com/bruceyeban)
