@@ -81,11 +81,13 @@
     margin: 0 20px 0 10px;
     flex: none ;
 }
+.red-controls-group .red-like-button {
+    flex: none;
+}
 
 .red-controls-group .red-export-button {
     background-color: var(--text-accent);
     color: var(--text-on-accent);
-    border: none;
 }
 .red-controls-group .red-export-button:hover {
     color: var(--text-on-accent);
