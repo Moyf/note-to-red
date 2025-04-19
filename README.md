@@ -3,6 +3,13 @@
 
 ![downloads](https://img.shields.io/badge/dynamic/json?color=brightgreen&label=downloads&query=%24%5B%22note-to-red%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json&style=flat) ![version](https://img.shields.io/github/v/tag/Yeban8090/note-to-red?color=blue&label=version&style=flat) ![license](https://img.shields.io/badge/license-MIT-green) [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-支持作者-yellow)](https://ko-fi.com/bruceyeban)
 
+<!-- 预览图开始 -->
+<p align="center">
+  <img src="assets/preview/screenshot1.png" alt="主题切换预览" width="600"/>
+  <br/>
+</p>
+<!-- 预览图结束 -->
+
 ## 功能特点
 - 📝 使用二级标题分割内容，每个标题自动生成一张配图
 - 🎨 提供多种精美模板，支持自定义字体和字号
