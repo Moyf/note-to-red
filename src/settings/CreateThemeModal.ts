@@ -558,40 +558,40 @@ export class CreateThemeModal extends Modal {
                             .replace(/border:\s*1px solid\s*#[a-fA-F0-9]+80/, `border: 1px solid ${value}80`);
                     });
             });
-    
-            new Setting(headerSection)
-        .setName('认证图标颜色')
-        .setDesc('设置认证（已验证）图标的主色')
-        .addColorPicker(color => {
-            // 兼容 background: linear-gradient(...) 和 background-color: ...
-            let currentColor = '#b87333';
-            const bgMatch = styles.verifiedIcon.match(/background:\s*linear-gradient\([^,]+,\s*(#[a-fA-F0-9]+)/);
-            if (bgMatch) {
-                currentColor = bgMatch[1];
-            } else {
-                const colorMatch = styles.verifiedIcon.match(/background-color:\s*(#[a-fA-F0-9]+)/);
-                if (colorMatch) {
-                    currentColor = colorMatch[1];
+
+        new Setting(headerSection)
+            .setName('认证图标颜色')
+            .setDesc('设置认证（已验证）图标的主色')
+            .addColorPicker(color => {
+                // 兼容 background: linear-gradient(...) 和 background-color: ...
+                let currentColor = '#b87333';
+                const bgMatch = styles.verifiedIcon.match(/background:\s*linear-gradient\([^,]+,\s*(#[a-fA-F0-9]+)/);
+                if (bgMatch) {
+                    currentColor = bgMatch[1];
+                } else {
+                    const colorMatch = styles.verifiedIcon.match(/background-color:\s*(#[a-fA-F0-9]+)/);
+                    if (colorMatch) {
+                        currentColor = colorMatch[1];
+                    }
                 }
-            }
-            color.setValue(currentColor)
-                .onChange(value => {
-                    // 先处理 linear-gradient
-                    if (styles.verifiedIcon.includes('linear-gradient')) {
+                color.setValue(currentColor)
+                    .onChange(value => {
+                        // 先处理 linear-gradient
+                        if (styles.verifiedIcon.includes('linear-gradient')) {
+                            styles.verifiedIcon = styles.verifiedIcon
+                                .replace(/background:\s*linear-gradient\([^)]+\)/, `background: linear-gradient(135deg, ${value}, ${value})`);
+                        }
+                        // 再处理 background-color
+                        if (styles.verifiedIcon.includes('background-color')) {
+                            styles.verifiedIcon = styles.verifiedIcon
+                                .replace(/background-color:\s*#[a-fA-F0-9]+/, `background-color: ${value}`);
+                        }
+                        // 统一处理 border 和 box-shadow
                         styles.verifiedIcon = styles.verifiedIcon
-                            .replace(/background:\s*linear-gradient\([^)]+\)/, `background: linear-gradient(135deg, ${value}, ${value})`);
-                    }
-                    // 再处理 background-color
-                    if (styles.verifiedIcon.includes('background-color')) {
-                        styles.verifiedIcon = styles.verifiedIcon
-                            .replace(/background-color:\s*#[a-fA-F0-9]+/, `background-color: ${value}`);
-                    }
-                    // 统一处理 border 和 box-shadow
-                    styles.verifiedIcon = styles.verifiedIcon
-                        .replace(/border:\s*1px solid\s*#[a-fA-F0-9]+80/, `border: 1px solid ${value}80`)
-                        .replace(/box-shadow:\s*0 2px 8px [^;]+;/, `box-shadow: 0 2px 8px ${value}1a;`);
-                });
-        });
+                            .replace(/border:\s*1px solid\s*#[a-fA-F0-9]+80/, `border: 1px solid ${value}80`)
+                            .replace(/box-shadow:\s*0 2px 8px [^;]+;/, `box-shadow: 0 2px 8px ${value}1a;`);
+                    });
+            });
     }
 
     private addTitleSettings(container: HTMLElement, styles: any) {
@@ -667,6 +667,38 @@ export class CreateThemeModal extends Modal {
                 color.setValue(currentBg)
                     .onChange(value => {
                         styles.container = styles.container.replace(/background:\s*[^;]+/, `background: ${value}`);
+                    });
+            });
+        // 新增：页脚上下内边距设置（只改第一个值，第二个值保持原样）
+        new Setting(footerSection)
+            .setName('上下内边距')
+            .setDesc('设置页脚区域的上下内边距（单位：px）')
+            .addText(text => {
+                // 解析当前padding
+                let match = styles.container.match(/padding:\s*(\d+)px\s*(\d+)px/);
+                let paddingTop = '16', paddingLR = '16';
+                if (match) {
+                    paddingTop = match[1];
+                    paddingLR = match[2];
+                } else {
+                    // 兼容只有一个值的情况
+                    let single = styles.container.match(/padding:\s*(\d+)px/);
+                    if (single) {
+                        paddingTop = single[1];
+                        paddingLR = single[1];
+                    }
+                }
+                text.setValue(paddingTop)
+                    .onChange(value => {
+                        const v = parseInt(value) || 16;
+                        // 只替换第一个值，第二个值保持原样
+                        if (styles.container.match(/padding:\s*\d+px\s*\d+px/)) {
+                            styles.container = styles.container.replace(/padding:\s*\d+px\s*\d+px/, `padding: ${v}px ${paddingLR}px`);
+                        } else if (styles.container.match(/padding:\s*\d+px/)) {
+                            styles.container = styles.container.replace(/padding:\s*\d+px/, `padding: ${v}px ${paddingLR}px`);
+                        } else {
+                            styles.container += ` padding: ${v}px ${paddingLR}px;`;
+                        }
                     });
             });
     }
