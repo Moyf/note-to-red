@@ -5,7 +5,7 @@
 
 <!-- 预览图开始 -->
 <p align="center">
-  <img src="assets/preview/screenshot1.png" alt="主题切换预览" width="600"/>
+  <img src="src/assets/preview/screenshot1.png" alt="主题切换预览" width="600"/>
   <br/>
 </p>
 <!-- 预览图结束 -->
