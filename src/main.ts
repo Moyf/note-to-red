@@ -8,6 +8,7 @@ import { RedSettingTab } from './settings/SettingTab';
 
 export default class RedPlugin extends Plugin {
     settingsManager: SettingsManager;
+    themeManager: ThemeManager;
 
     async onload() {
         // 初始化设置管理器
@@ -15,7 +16,7 @@ export default class RedPlugin extends Plugin {
         await this.settingsManager.loadSettings();
 
         // 初始化主题管理器
-        const themeManager = new ThemeManager(this.app, this.settingsManager);
+        this.themeManager = new ThemeManager(this.app, this.settingsManager);
 
         // 初始化转换器
         RedConverter.initialize(this.app);
@@ -25,7 +26,7 @@ export default class RedPlugin extends Plugin {
         // 注册视图
         this.registerView(
             VIEW_TYPE_RED,
-            (leaf) => new RedView(leaf, themeManager, this.settingsManager)
+            (leaf) => new RedView(leaf, this.themeManager, this.settingsManager)
         );
 
         // 添加首次加载自动打开视图的逻辑

@@ -1,5 +1,6 @@
 import { App, Modal, Setting, Notice, setIcon } from 'obsidian';
 import { Theme } from '../themeManager';
+import { ThemePreviewModal } from './ThemePreviewModal';
 import RedPlugin from '../main';
 export class CreateThemeModal extends Modal {
     theme: Theme;
@@ -191,16 +192,23 @@ export class CreateThemeModal extends Modal {
         const buttonContainer = contentEl.createDiv('modal-button-container');
         new Setting(buttonContainer)
             .addButton(btn => btn
+                .setIcon('eye')
+                .onClick(() => {
+                    // 打开预览模式
+                    const previewModal = new ThemePreviewModal(this.app, this.theme, this.plugin.themeManager);
+                    previewModal.open();
+                }))
+            .addButton(btn => btn
+                .setButtonText('取消')
+                .onClick(() => this.close()))
+            .addButton(btn => btn
                 .setButtonText('保存')
                 .setCta()
                 .onClick(async () => {
                     if (await this.validateAndSubmit()) {
                         this.close();
                     }
-                }))
-            .addButton(btn => btn
-                .setButtonText('取消')
-                .onClick(() => this.close()));
+                }));
 
         this.nameInput.addEventListener('keydown', async (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {

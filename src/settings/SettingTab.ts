@@ -3,6 +3,7 @@ import RedPlugin from '../main'; // 修改插件名以匹配类名
 import { CreateThemeModal } from './CreateThemeModal';
 import { CreateFontModal } from './CreateFontModal';
 import { ConfirmModal } from './ConfirmModal'; // 添加确认模态框导入
+import { ThemePreviewModal } from './ThemePreviewModal'; // 新增导入
 
 export class RedSettingTab extends PluginSettingTab {
     plugin: RedPlugin; // 修改插件类型以匹配类名
@@ -268,6 +269,12 @@ export class RedSettingTab extends PluginSettingTab {
                 new Setting(themeItem)
                     .setName(theme.name)
                     .setDesc(theme.description)
+                    .addExtraButton(btn => 
+                        btn.setIcon('eye')
+                            .setTooltip('预览')
+                            .onClick(() => {
+                                new ThemePreviewModal(this.app, theme, this.plugin.themeManager).open(); // 修改为使用预览模态框
+                            }))
                     .addExtraButton(btn => 
                         btn.setIcon('pencil')
                             .setTooltip('编辑')
