@@ -192,7 +192,7 @@ export class CreateThemeModal extends Modal {
         const buttonContainer = contentEl.createDiv('modal-button-container');
         new Setting(buttonContainer)
             .addButton(btn => btn
-                .setIcon('eye')
+                .setButtonText('预览')
                 .onClick(() => {
                     // 打开预览模式
                     const previewModal = new ThemePreviewModal(this.app, this.theme, this.plugin.themeManager);

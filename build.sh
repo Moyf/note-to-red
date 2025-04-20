@@ -5,7 +5,7 @@ version=$(grep '"version"' manifest.json | cut -d '"' -f 4)
 zip_name="note-to-red-${version}.zip"
 
 # 检查目标文件是否存在
-if [ -f "../${zip_name}" ]; then
+if [ -f "../../${zip_name}" ]; then
     read -p "文件 ${zip_name} 已存在，是否覆盖？(y/n) " answer
     if [ "$answer" != "y" ]; then
         echo "打包已取消"
@@ -27,7 +27,7 @@ cd ../temp
 zip -r "${zip_name}" note-to-red
 
 # 移动 zip 文件到上级目录
-mv "${zip_name}" ../
+mv "${zip_name}" ../../
 
 # 清理临时目录
 cd ..
