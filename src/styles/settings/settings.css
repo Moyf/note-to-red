@@ -244,7 +244,7 @@
 
 /* 设置子区域折叠样式 */
 .red-settings .red-settings-subsection {
-    margin-bottom: 1.5rem;
+    margin: 0 12px;
     border: 1px solid var(--background-modifier-border);
     border-radius: 8px;
     overflow-y: auto;
