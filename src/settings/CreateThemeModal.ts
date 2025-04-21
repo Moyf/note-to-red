@@ -126,7 +126,7 @@ export class CreateThemeModal extends Modal {
                         .onChange(value => {
                             const selectedTheme = this.getThemeById(value);
                             if (selectedTheme) {
-                                this.theme = { ...selectedTheme, id: '', name: '', description: '', isPreset: false };
+                                this.theme = { ...selectedTheme, id: '', name: '', description: '', isPreset: false, isVisible: true};
                             }
                         })
                         .selectEl;
