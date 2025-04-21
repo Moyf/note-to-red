@@ -105,8 +105,8 @@ export class ThemeManager {
     }
 
     // 修改 applyTheme 方法
-    public applyTheme(element: HTMLElement): void {
-        const styles = this.currentTheme.styles;
+    public applyTheme(element: HTMLElement, theme?: Theme): void {
+        const styles = theme ? theme.styles : this.currentTheme.styles; // 修改为从参数 theme 获取样式
         // 修改应用基础样式的方式
         const imagePreview = element.querySelector('.red-image-preview') as HTMLElement;
         if (imagePreview) {
