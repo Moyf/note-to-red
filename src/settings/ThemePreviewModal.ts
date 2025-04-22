@@ -48,8 +48,10 @@ export class ThemePreviewModal extends Modal {
         content.createEl('h2', { text: '探索夜半插件的无限可能' });
 
         // 段落样式
-        content.createEl('p', { text: '插件为您提供各种优雅的操作，助您轻松发布笔记。' });
-        content.createEl('p', { text: '通过插件，您可以快速组织内容，提升工作效率。' });
+        const paragraph1 = content.createEl('p');
+        paragraph1.createEl('span', { text: '插件提供多种' });
+        paragraph1.createEl('strong', { text: '优雅的操作，' });
+        paragraph1.createEl('span', { text: '助您轻松发布笔记。' });
 
         // 列表样式
         const list = content.createEl('ul');
@@ -71,6 +73,8 @@ export class ThemePreviewModal extends Modal {
 
         // 分隔线样式
         content.createEl('hr');
+
+        content.createEl('strong', { text: '如果您觉得我的插件对您有帮助，请打赏支持我。'});
 
         // 页脚区域
         const footer = previewContainer.createDiv('red-preview-footer');

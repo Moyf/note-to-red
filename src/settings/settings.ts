@@ -127,6 +127,7 @@ export class SettingsManager extends EventEmitter {
 
     async addCustomTheme(theme: Theme) {
         theme.isPreset = false;
+        theme.isVisible = true;
         this.settings.customThemes.push(theme);
         await this.saveSettings();
         this.emit('theme-visibility-changed');
