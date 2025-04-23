@@ -195,7 +195,7 @@ export class CreateThemeModal extends Modal {
                 .setButtonText('预览')
                 .onClick(() => {
                     // 打开预览模式
-                    const previewModal = new ThemePreviewModal(this.app, this.theme, this.plugin.themeManager);
+                    const previewModal = new ThemePreviewModal(this.app, this.plugin.settingsManager, this.theme, this.plugin.themeManager);
                     previewModal.open();
                 }))
             .addButton(btn => btn

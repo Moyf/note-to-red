@@ -1,12 +1,15 @@
 import { App, Modal } from 'obsidian';
 import { ThemeManager } from '../themeManager';
+import { SettingsManager } from '../settings/settings';
 
 export class ThemePreviewModal extends Modal {
     private theme: any;
     private themeManager: ThemeManager;
+    private settingsManager: SettingsManager;
 
-    constructor(app: App, theme: any, themeManager: ThemeManager) {
+    constructor(app: App, settingsManager: SettingsManager, theme: any, themeManager: ThemeManager) {
         super(app);
+        this.settingsManager = settingsManager;
         this.theme = theme;
         this.themeManager = themeManager;
     }
@@ -22,28 +25,39 @@ export class ThemePreviewModal extends Modal {
         // 添加预览区域
         const container = contentEl.createDiv('tp-red-preview-container');
         const previewContainer = container.createDiv('red-image-preview');
-        
+
+        const settings = this.settingsManager.getSettings();
+
         // 页眉区域
         const header = previewContainer.createDiv('red-preview-header');
         const userInfo = header.createEl('div', { cls: 'red-user-info' });
         const userLeft = userInfo.createEl('div', { cls: 'red-user-left' });
         const avatar = userLeft.createEl('div', { cls: 'red-user-avatar' });
-        const placeholder = avatar.createEl('div', { cls: 'red-avatar-placeholder' });
+        if (settings.userAvatar) {
+            avatar.createEl('img', {
+                attr: {
+                    src: settings.userAvatar,
+                    alt: '用户头像'
+                }
+            });
+        } else {
+            const placeholder = avatar.createEl('div', { cls: 'red-avatar-placeholder' });
             placeholder.createEl('span', {
                 cls: 'red-avatar-upload-icon',
                 text: '📷'
             });
+        }
         const userMeta = userLeft.createEl('div', { cls: 'red-user-meta' });
         const userNameContainer = userMeta.createEl('div', { cls: 'red-user-name-container' });
-        userNameContainer.createEl('div', { cls: 'red-user-name', text: '夜半' });
+        userNameContainer.createEl('div', { cls: 'red-user-name', text: `${settings.userName}` });
         userNameContainer.createEl('div', { cls: 'red-verified-icon', text: '✓' });
-        userMeta.createEl('div', { cls: 'red-user-id', text: '@Yeban' });
+        userMeta.createEl('div', { cls: 'red-user-id', text: `${settings.userId}` });
         const userRight = userInfo.createEl('div', { cls: 'red-user-right' });
         userRight.createEl('div', { cls: 'red-post-time', text: '2025/4/20' });
 
         // 内容区域
         const content = previewContainer.createDiv('red-preview-content');
-        
+
         // 标题样式
         content.createEl('h2', { text: '探索夜半插件的无限可能' });
 
@@ -74,13 +88,13 @@ export class ThemePreviewModal extends Modal {
         // 分隔线样式
         content.createEl('hr');
 
-        content.createEl('strong', { text: '如果您觉得我的插件对您有帮助，请打赏支持我。'});
+        content.createEl('strong', { text: '如果您觉得我的插件对您有帮助，请打赏支持我。' });
 
         // 页脚区域
         const footer = previewContainer.createDiv('red-preview-footer');
-        footer.createEl('div', { cls: 'red-footer-text', text: '夜半过后，光明便启程'});
+        footer.createEl('div', { cls: 'red-footer-text', text: `${settings.footerLeftText}` });
         footer.createEl('div', { cls: 'red-footer-separator', text: '|' });
-        footer.createEl('div', { cls: 'red-footer-text', text: '欢迎关注公众号🌏：夜半'});
+        footer.createEl('div', { cls: 'red-footer-text', text: `${settings.footerRightText}` });
 
         this.themeManager.applyTheme(container, this.theme);
     }

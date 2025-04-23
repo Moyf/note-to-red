@@ -273,7 +273,7 @@ export class RedSettingTab extends PluginSettingTab {
                         btn.setIcon('eye')
                             .setTooltip('预览')
                             .onClick(() => {
-                                new ThemePreviewModal(this.app, theme, this.plugin.themeManager).open(); // 修改为使用预览模态框
+                                new ThemePreviewModal(this.app, this.plugin.settingsManager, theme, this.plugin.themeManager).open(); // 修改为使用预览模态框
                             }))
                     .addExtraButton(btn => 
                         btn.setIcon('pencil')
