@@ -30,7 +30,7 @@ export class ImgTemplateManager {
         this.registerTemplate(new DefaultTemplate(this.settingsManager, this.onSettingsUpdate));
 
         // 注册现代模板
-        this.registerTemplate(new NotesTemplate());
+        this.registerTemplate(new NotesTemplate(this.settingsManager, this.onSettingsUpdate));
     }
 
     registerTemplate(template: ImgTemplate) {
