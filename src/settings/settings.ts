@@ -12,6 +12,7 @@ interface RedSettings {
     // 添加用户信息设置
     userAvatar: string;
     userName: string;
+    notesTitle: string;
     userId: string;
     showTime: boolean;
     timeFormat: string;
@@ -36,6 +37,7 @@ export const DEFAULT_SETTINGS: RedSettings = {
     // 修改默认用户信息
     userAvatar: '',  // 默认为空，提示用户上传
     userName: '夜半',
+    notesTitle: '备忘录',
     userId: '@Yeban',
     showTime: true,
     timeFormat: 'zh-CN',
