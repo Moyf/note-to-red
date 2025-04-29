@@ -97,31 +97,79 @@ export class RedConverter {
         element.dispatchEvent(copyEvent);
     }
 
-    private static createContentSection(header: Element, index: number): HTMLElement | null {
+        private static createContentSection(header: Element, index: number): HTMLElement | null {
         // 获取当前标题到下一个标题之间的所有内容
-        let content = [];
+        let content: Element[] = [];
         let current = header.nextElementSibling;
         
         while (current && current.tagName !== 'H2') {
-            content.push(current.cloneNode(true));
+            content.push(current.cloneNode(true) as Element);
             current = current.nextElementSibling;
         }
 
-        // 创建内容区域
-        const section = document.createElement('section');
-        section.className = 'red-content-section';
-        section.setAttribute('data-index', index.toString());
+        // 检查内容中是否有水平分割线
+        const pages: Element[][] = [[]];
+        let currentPage = 0;
         
-        // 添加标题
-        section.appendChild(header.cloneNode(true));
+        content.forEach((el: Element) => {
+            // 检查是否为水平分割线
+            if (el.tagName === 'HR') {
+                // 创建新页面
+                currentPage++;
+                pages[currentPage] = [];
+            } else {
+                // 如果当前页面数组不存在，创建一个
+                if (!pages[currentPage]) {
+                    pages[currentPage] = [];
+                }
+                // 添加元素到当前页面
+                pages[currentPage].push(el);
+            }
+        });
         
-        // 添加内容
-        content.forEach(el => section.appendChild(el));
-        
-        // 处理样式和格式
-        this.processElements(section);
-        
-        return section;
+        // 如果只有一个页面，按原来的方式处理
+        if (pages.length === 1 && !content.some(el => el.tagName === 'HR')) {
+            // 创建内容区域
+            const section = document.createElement('section');
+            section.className = 'red-content-section';
+            section.setAttribute('data-index', index.toString());
+            
+            // 添加标题
+            section.appendChild(header.cloneNode(true));
+            
+            // 添加内容
+            content.forEach(el => section.appendChild(el));
+            
+            // 处理样式和格式
+            this.processElements(section);
+            
+            return section;
+        } else {
+            // 创建一个包含多个页面的片段
+            const fragment = document.createDocumentFragment();
+            
+            // 为每个页面创建一个部分
+            pages.forEach((pageContent, pageIndex) => {
+                if (pageContent.length === 0) return; // 跳过空页面
+                
+                const section = document.createElement('section');
+                section.className = 'red-content-section';
+                section.setAttribute('data-index', `${index}-${pageIndex}`);
+                
+                // 每个页面都添加标题
+                section.appendChild(header.cloneNode(true));
+                
+                // 添加页面内容
+                pageContent.forEach(el => section.appendChild(el));
+                
+                // 处理样式和格式
+                this.processElements(section);
+                
+                fragment.appendChild(section);
+            });
+            
+            return fragment as unknown as HTMLElement;
+        }
     }
 
     private static processElements(container: HTMLElement | null): void {
