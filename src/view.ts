@@ -312,12 +312,13 @@ export class RedView extends ItemView {
             cls: 'red-help-tooltip',
             text: `使用指南：
                 1. 核心用法：用二级标题(##)分割内容，每个标题生成一张小红书配图
-                2. 首图制作：单独调整首节字号至20-24px，使用【下载当前页】导出
-                3. 长文优化：内容较多的章节可调小字号至14-16px后单独导出
-                4. 批量操作：保持统一字号时，用【导出全部页】批量生成
-                5. 模板切换：顶部选择器可切换不同视觉风格
-                6. 实时编辑：解锁状态(🔓)下编辑文档即时预览效果
-                7. 支持创作：点击❤️关于作者可进行打赏支持`
+                2. 内容分页：在二级标题下使用 --- 可将内容分割为多页，每页都会带上标题
+                3. 首图制作：单独调整首节字号至20-24px，使用【下载当前页】导出
+                4. 长文优化：内容较多的章节可调小字号至14-16px后单独导出
+                5. 批量操作：保持统一字号时，用【导出全部页】批量生成
+                6. 模板切换：顶部选择器可切换不同视觉风格
+                7. 实时编辑：解锁状态(🔓)下编辑文档即时预览效果
+                8. 支持创作：点击❤️关于作者可进行打赏支持`
         });
     }
 
@@ -342,6 +343,9 @@ export class RedView extends ItemView {
 
         singleDownloadButton.addEventListener('click', async () => {
             if (this.previewEl) {
+                // 先显示赞赏框
+                DonateManager.showDonateModal(this.containerEl);
+                
                 singleDownloadButton.disabled = true;
                 singleDownloadButton.setText('导出中...');
 
@@ -367,6 +371,9 @@ export class RedView extends ItemView {
 
         this.copyButton.addEventListener('click', async () => {
             if (this.previewEl) {
+                // 先显示赞赏框
+                DonateManager.showDonateModal(this.containerEl);
+                
                 this.copyButton.disabled = true;
                 this.copyButton.setText('导出中...');
 
@@ -392,6 +399,9 @@ export class RedView extends ItemView {
                 copyButton.addEventListener('click', async () => {
                     copyButton.disabled = true;
                     try {
+                        // 先显示赞赏框
+                        DonateManager.showDonateModal(this.containerEl);
+                        
                         await ClipboardManager.copyImageToClipboard(this.previewEl);
                         new Notice('图片已复制到剪贴板');
                     } catch (error) {

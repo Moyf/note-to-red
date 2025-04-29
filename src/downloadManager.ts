@@ -22,35 +22,35 @@ export class DownloadManager {
             const zip = new JSZip();
             const previewContainer = element.querySelector('.red-preview-container');
             if (!previewContainer) throw new Error('找不到预览容器');
-    
+
             // 定义 CSS 类名常量
             const VISIBLE_CLASS = 'red-section-visible';
             const HIDDEN_CLASS = 'red-section-hidden';
-            
+
             const sections = previewContainer.querySelectorAll<HTMLElement>('.red-content-section');
             const totalSections = sections.length;
-    
+
             // 保存原始可见状态（基于类名）
             const originalVisibility = Array.from(sections).map(section => ({
                 visible: section.classList.contains(VISIBLE_CLASS),
                 hidden: section.classList.contains(HIDDEN_CLASS)
             }));
-    
+
             for (let i = 0; i < totalSections; i++) {
                 // 使用 classList API 批量操作
                 sections.forEach(section => {
                     section.classList.add(HIDDEN_CLASS);
                     section.classList.remove(VISIBLE_CLASS);
                 });
-                
+
                 sections[i].classList.remove(HIDDEN_CLASS);
                 sections[i].classList.add(VISIBLE_CLASS);
-    
+
                 // 确保浏览器完成重绘并等待资源加载
                 await new Promise(resolve => setTimeout(resolve, 300));
-                
+
                 const imageElement = element.querySelector<HTMLElement>('.red-image-preview')!;
-                
+
                 try {
                     const blob = await htmlToImage.toBlob(imageElement, this.getExportConfig(imageElement));
                     if (blob instanceof Blob) {
@@ -78,15 +78,21 @@ export class DownloadManager {
                 }
             }
 
+            // 恢复原始类名状态
+            sections.forEach((section, index) => {
+                section.classList.toggle(VISIBLE_CLASS, originalVisibility[index].visible);
+                section.classList.toggle(HIDDEN_CLASS, originalVisibility[index].hidden);
+            });
+
             // 创建下载
-            const content = await zip.generateAsync({ 
+            const content = await zip.generateAsync({
                 type: "blob",
                 compression: "DEFLATE",
                 compressionOptions: {
                     level: 9
                 }
             });
-            
+
             if (!(content instanceof Blob)) {
                 throw new Error('生成的压缩文件不是有效的 Blob 对象');
             }
@@ -96,14 +102,14 @@ export class DownloadManager {
                 href: url,
                 download: `小红书笔记_${Date.now()}.zip`
             });
-            
+
             link.click();
             URL.revokeObjectURL(url);
         } catch (error) {
             console.error('导出图片失败:', error);
             throw error;
         }
-    }    
+    }
 
     static async downloadSingleImage(element: HTMLElement): Promise<void> {
         try {
@@ -111,21 +117,21 @@ export class DownloadManager {
             if (!imageElement) {
                 throw new Error('找不到预览区域');
             }
-            
+
             // 确保浏览器完成重绘并等待资源加载
             await new Promise(resolve => setTimeout(resolve, 300));
-            
+
             try {
                 // 使用 html-to-image 替代 dom-to-image
                 const blob = await htmlToImage.toBlob(imageElement, this.getExportConfig(imageElement));
-                
+
                 // 创建下载链接并触发下载
                 if (!blob) throw new Error('Blob 对象为空');
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
                 link.download = `小红书笔记_${new Date().getTime()}.png`;
-    
+
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -142,7 +148,7 @@ export class DownloadManager {
                     const link = document.createElement('a');
                     link.href = url;
                     link.download = `小红书笔记_${new Date().getTime()}.png`;
-        
+
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
