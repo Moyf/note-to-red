@@ -2,6 +2,8 @@ import { Theme } from '../themeManager';
 import  RedPlugin  from '../main';
 import { EventEmitter } from 'events';
 interface RedSettings {
+    donateCount?: number;
+    lastDonatePrompt?: number;
     templateId: string;
     themeId: string;
     fontFamily: string;

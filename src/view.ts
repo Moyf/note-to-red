@@ -18,6 +18,10 @@ export class RedView extends ItemView {
     private isPreviewLocked: boolean = false;
     private currentImageIndex: number = 0;
     private backgroundManager: BackgroundManager;
+    // 添加捐赠提醒相关属性
+    private donateCount: number = 0;
+    private lastDonatePrompt: number = 0;
+    private MAX_COUNT_BEFORE_PROMPT: number = 5; // 每使用5次提醒一次
 
     // UI 元素
     private lockButton: HTMLButtonElement;
@@ -53,6 +57,11 @@ export class RedView extends ItemView {
             this.updatePreview.bind(this),
             this.themeManager
         );
+
+        // 从设置中恢复捐赠计数和上次提示时间
+        const settings = this.settingsManager.getSettings();
+        this.donateCount = settings.donateCount || 0;
+        this.lastDonatePrompt = settings.lastDonatePrompt || 0;
     }
 
     getViewType() {
@@ -343,9 +352,11 @@ export class RedView extends ItemView {
 
         singleDownloadButton.addEventListener('click', async () => {
             if (this.previewEl) {
-                // 先显示赞赏框
-                DonateManager.showDonateModal(this.containerEl);
-                
+                // 检查是否需要显示捐赠弹窗
+                if (this.shouldShowDonatePrompt()) {
+                    DonateManager.showDonateModal(this.containerEl);
+                }
+
                 singleDownloadButton.disabled = true;
                 singleDownloadButton.setText('导出中...');
 
@@ -371,9 +382,11 @@ export class RedView extends ItemView {
 
         this.copyButton.addEventListener('click', async () => {
             if (this.previewEl) {
-                // 先显示赞赏框
-                DonateManager.showDonateModal(this.containerEl);
-                
+                // 检查是否需要显示捐赠弹窗
+                if (this.shouldShowDonatePrompt()) {
+                    DonateManager.showDonateModal(this.containerEl);
+                }
+
                 this.copyButton.disabled = true;
                 this.copyButton.setText('导出中...');
 
@@ -399,9 +412,11 @@ export class RedView extends ItemView {
                 copyButton.addEventListener('click', async () => {
                     copyButton.disabled = true;
                     try {
-                        // 先显示赞赏框
-                        DonateManager.showDonateModal(this.containerEl);
-                        
+                        // 检查是否需要显示捐赠弹窗
+                        if (this.shouldShowDonatePrompt()) {
+                            DonateManager.showDonateModal(this.containerEl);
+                        }
+
                         await ClipboardManager.copyImageToClipboard(this.previewEl);
                         new Notice('图片已复制到剪贴板');
                     } catch (error) {
@@ -688,4 +703,38 @@ export class RedView extends ItemView {
         return this.settingsManager.getFontOptions();
     }
     // #endregion
+
+
+    // 检查是否需要显示捐赠弹窗
+    private shouldShowDonatePrompt(): boolean {
+        // 增加使用次数
+        this.donateCount++;
+
+        // 保存到设置中
+        if (this.settingsManager) {
+            const settings = this.settingsManager.getSettings();
+            settings.donateCount = this.donateCount;
+            this.settingsManager.updateSettings(settings);
+        }
+
+        const now = Date.now();
+        const oneDayInMs = 24 * 60 * 60 * 1000; // 一天的毫秒数
+
+        // 如果使用次数达到阈值且24小时内未显示过
+        if (this.donateCount % this.MAX_COUNT_BEFORE_PROMPT === 0 && now - this.lastDonatePrompt > oneDayInMs) {
+            // 更新上次显示时间
+            this.lastDonatePrompt = now;
+
+            // 保存到设置中
+            if (this.settingsManager) {
+                const settings = this.settingsManager.getSettings();
+                settings.lastDonatePrompt = this.lastDonatePrompt;
+                this.settingsManager.updateSettings(settings);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
 }
