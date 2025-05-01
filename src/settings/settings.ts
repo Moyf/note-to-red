@@ -18,6 +18,7 @@ interface RedSettings {
     userId: string;
     showTime: boolean;
     timeFormat: string;
+    showFooter?: boolean;
     footerLeftText: string;
     footerRightText: string;
     customFonts: { value: string; label: string; isPreset?: boolean }[];  // 添加自定义字体配置

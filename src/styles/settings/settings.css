@@ -285,3 +285,10 @@
 .red-settings .red-settings-subsection.is-expanded .red-settings-subsection-content {
     display: block;
 }
+
+.red-settings-divider {
+    margin: 15px 0;
+    border: none;
+    height: 1px;
+    background-color: var(--background-modifier-border);
+  }
