@@ -155,8 +155,36 @@ export class RedSettingTab extends PluginSettingTab {
             setIcon(themeVisibilityToggle, isExpanded ? 'chevron-down' : 'chevron-right');
         });
         
+        // 添加页脚显示设置
+        new Setting(themeVisibilityContent)
+            .setName('是否显示时间')
+            .setDesc('控制是否在主题中显示页眉时间')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settingsManager.getSettings().showTime !== false)
+                .onChange(async (value) => {
+                    await this.plugin.settingsManager.updateSettings({
+                        showTime: value
+                    });
+                    new Notice('请重启 Obsidian 或重新加载以使更改生效');
+                })
+            );
+
+        // 添加页脚显示设置
+        new Setting(themeVisibilityContent)
+            .setName('是否显示页脚')
+            .setDesc('控制是否在主题中显示页脚部分')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settingsManager.getSettings().showFooter !== false)
+                .onChange(async (value) => {
+                    await this.plugin.settingsManager.updateSettings({
+                        showFooter: value
+                    });
+                    new Notice('请重启 Obsidian 或重新加载以使更改生效');
+                })
+            );
    
-        
+        themeVisibilityContent.createEl('hr', { cls: 'red-settings-divider' });
+
         // 主题选择容器
         const themeSelectionContainer = themeVisibilityContent.createDiv('theme-selection-container');
         

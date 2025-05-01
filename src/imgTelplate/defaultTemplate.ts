@@ -18,6 +18,8 @@ export class DefaultTemplate implements ImgTemplate {
 
     render(element: HTMLElement) {
         const sections = element.querySelectorAll('.red-content-section');
+        const settings = this.settingsManager.getSettings();
+        
         sections.forEach(section => {
             // 获取已有的头部和页脚元素
             const header = element.querySelector('.red-preview-header');
@@ -30,7 +32,13 @@ export class DefaultTemplate implements ImgTemplate {
 
             // 页脚内容
             if (this.sections.footer && footer) {
-                this.createFooterContent(footer as HTMLElement);
+                // 检查是否显示页脚
+                if (settings.showFooter !== false) {
+                    this.createFooterContent(footer as HTMLElement);
+                } else {
+                    // 完全移除页脚元素
+                    footer.remove();
+                }
             }
         });
     }
