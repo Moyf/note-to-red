@@ -92,9 +92,18 @@ export class ThemePreviewModal extends Modal {
 
         // 页脚区域
         const footer = previewContainer.createDiv('red-preview-footer');
-        footer.createEl('div', { cls: 'red-footer-text', text: `${settings.footerLeftText}` });
-        footer.createEl('div', { cls: 'red-footer-separator', text: '|' });
-        footer.createEl('div', { cls: 'red-footer-text', text: `${settings.footerRightText}` });
+        // 页脚内容
+        if (footer) {
+            // 检查是否显示页脚
+            if (settings.showFooter !== false) {
+                footer.createEl('div', { cls: 'red-footer-text', text: `${settings.footerLeftText}` });
+                footer.createEl('div', { cls: 'red-footer-separator', text: '|' });
+                footer.createEl('div', { cls: 'red-footer-text', text: `${settings.footerRightText}` });
+            } else {
+                // 完全移除页脚元素
+                footer.remove();
+            }
+        }
 
         this.themeManager.applyTheme(container, this.theme);
     }
