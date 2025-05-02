@@ -63,15 +63,15 @@
 
 <div align="center">
   <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-    <div style="text-align: center; margin: 10px;">
+    <div style="text-align: center; margin: 1px;">
       <strong>微信支付</strong><br/>
       <img src="src/assets/donate/wechat_pay.png" alt="微信支付" width="180px" style="margin-top: 10px;">
     </div>
-    <div style="text-align: center; margin: 10px;">
+    <div style="text-align: center; margin: 1px;">
       <strong>支付宝</strong><br/>
       <img src="src/assets/donate/alipay.png" alt="支付宝" width="180px" style="margin-top: 10px;">
     </div>
-    <div style="text-align: center; margin: 10px;">
+    <div style="text-align: center; margin: 1px;">
       <strong>Buy Me a Coffee</strong><br/>
       <a href="https://ko-fi.com/bruceyeban" style="margin-top: 10px; display: inline-block;">
         <img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-支持作者-yellow?style=for-the-badge&logo=ko-fi" alt="Buy Me a Coffee" />
