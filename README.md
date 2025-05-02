@@ -65,11 +65,11 @@
   <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
     <div style="text-align: center; margin: 10px;">
       <strong>微信支付</strong><br/>
-      <img src="src/assets/donate/wechat_pay.png" alt="微信支付" width="180px" style="margin-top: 10px;">
+      <img src="src/assets/donate/wechat_pay.png" alt="微信支付" width="160px" style="margin-top: 10px;">
     </div>
     <div style="text-align: center; margin: 10px;">
       <strong>支付宝</strong><br/>
-      <img src="src/assets/donate/alipay.png" alt="支付宝" width="180px" style="margin-top: 10px;">
+      <img src="src/assets/donate/alipay.png" alt="支付宝" width="160px" style="margin-top: 10px;">
     </div>
     <div style="text-align: center; margin: 10px;">
       <strong>Buy Me a Coffee</strong><br/>
