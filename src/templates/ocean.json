@@ -13,7 +13,7 @@
             "userName": "font-size: 16px; font-weight: 700; color: #40a9ff; text-shadow: 0 2px 8px rgba(64,169,255,0.2);",
             "userId": "font-size: 14px; color: #69c0ff; font-family: 'SF Pro Text';",
             "postTime": "font-size: 13px; color: #91d5ff; letter-spacing: 0.03em;",
-            "verifiedIcon": "width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; color: #0a192f; background: linear-gradient(135deg, #40a9ff, #69c0ff); border-radius: 6px; font-size: 10px; flex-shrink: 0; box-shadow: 0 2px 12px rgba(64,169,255,0.3); border: 1px solid #69c0ff80;"
+            "verifiedIcon": "width: 20px; height: 20px; margin-left: -5px; fill: #1DA1F2;"
         },
         "footer": {
             "container": "position: absolute; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 14px; padding: 16px; color: #69c0ff; font-size: 13px; border-top: 1px solid #1d3552; background: rgba(10,25,47,0.95); backdrop-filter: blur(12px);",

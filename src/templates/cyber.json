@@ -16,8 +16,8 @@
           "nameContainer": "display: flex; align-items: center; gap: 8px;",
           "userName": "font-size: 16px; font-weight: 600; color: #ff00ff; cursor: pointer; transition: all 0.2s ease; text-shadow: 0 0 10px rgba(255, 0, 255, 0.3); &:hover { color: #ff2a6d; }",
           "userId": "font-size: 14px; color: #00ffff; cursor: pointer; transition: all 0.2s ease; &:hover { color: #05ffa1; }",
-          "verifiedIcon": "width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; color: #ffffff; background-color: #ff00ff; border-radius: 50%; font-size: 10px; flex-shrink: 0; transition: all 0.3s ease; box-shadow: 0 0 10px rgba(255, 0, 255, 0.3); &:hover { transform: scale(1.1); background-color: #05ffa1; }",
-          "postTime": "font-size: 14px; color: #00ffff; cursor: pointer; transition: all 0.2s ease; &:hover { color: #05ffa1; }"
+          "postTime": "font-size: 14px; color: #00ffff; cursor: pointer; transition: all 0.2s ease; &:hover { color: #05ffa1; }",
+          "verifiedIcon": "width: 20px; height: 20px; margin-left: -5px; fill: #1DA1F2;"
         },
         
         "footer": {

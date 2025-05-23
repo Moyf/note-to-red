@@ -39,7 +39,7 @@ export class CreateThemeModal extends Modal {
                 userName: "font-size: 17px; font-weight: 600; color: #8b4513; serif; text-shadow: 0 2px 4px rgba(139,69,19,0.1);",
                 userId: "font-size: 14px; color: #b87333; font-family: 'Noto Serif SC', serif;",
                 postTime: "font-size: 13px; color: #d2691e; font-style: italic;",
-                verifiedIcon: "width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; color: #fffaf5; background: linear-gradient(135deg, #d2691e, #b87333); border-radius: 50%; font-size: 10px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(210,105,30,0.2); border: 1px solid #b8733380;"
+                verifiedIcon: "width: 20px; height: 20px; margin-left: -5px; fill: #1DA1F2;"
             },
             footer: {
                 container: "position: absolute; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 14px; padding: 16px; color: #b87333; font-size: 13px; border-top: 1px solid #b8733380; background: rgba(255,250,245,0.95); backdrop-filter: blur(8px);",
@@ -126,7 +126,7 @@ export class CreateThemeModal extends Modal {
                         .onChange(value => {
                             const selectedTheme = this.getThemeById(value);
                             if (selectedTheme) {
-                                this.theme = { ...selectedTheme, id: '', name: '', description: '', isPreset: false};
+                                this.theme = { ...selectedTheme, id: '', name: '', description: '', isPreset: false };
                             }
                         })
                         .selectEl;
@@ -566,38 +566,44 @@ export class CreateThemeModal extends Modal {
                             .replace(/border:\s*1px solid\s*#[a-fA-F0-9]+80/, `border: 1px solid ${value}80`);
                     });
             });
-
         new Setting(headerSection)
             .setName('认证图标颜色')
-            .setDesc('设置认证（已验证）图标的主色')
+            .setDesc('设置认证图标的颜色')
             .addColorPicker(color => {
-                // 兼容 background: linear-gradient(...) 和 background-color: ...
-                let currentColor = '#b87333';
-                const bgMatch = styles.verifiedIcon.match(/background:\s*linear-gradient\([^,]+,\s*(#[a-fA-F0-9]+)/);
-                if (bgMatch) {
-                    currentColor = bgMatch[1];
-                } else {
-                    const colorMatch = styles.verifiedIcon.match(/background-color:\s*(#[a-fA-F0-9]+)/);
-                    if (colorMatch) {
-                        currentColor = colorMatch[1];
-                    }
-                }
+                const currentColor = styles.verifiedIcon.match(/fill:\s*(#[a-fA-F0-9]+)/)?.[1] || '#1DA1F2';
                 color.setValue(currentColor)
                     .onChange(value => {
-                        // 先处理 linear-gradient
-                        if (styles.verifiedIcon.includes('linear-gradient')) {
-                            styles.verifiedIcon = styles.verifiedIcon
-                                .replace(/background:\s*linear-gradient\([^)]+\)/, `background: linear-gradient(135deg, ${value}, ${value})`);
-                        }
-                        // 再处理 background-color
-                        if (styles.verifiedIcon.includes('background-color')) {
-                            styles.verifiedIcon = styles.verifiedIcon
-                                .replace(/background-color:\s*#[a-fA-F0-9]+/, `background-color: ${value}`);
-                        }
-                        // 统一处理 border 和 box-shadow
                         styles.verifiedIcon = styles.verifiedIcon
-                            .replace(/border:\s*1px solid\s*#[a-fA-F0-9]+80/, `border: 1px solid ${value}80`)
-                            .replace(/box-shadow:\s*0 2px 8px [^;]+;/, `box-shadow: 0 2px 8px ${value}1a;`);
+                            .replace(/fill:\s*[^;]+/, `fill: ${value}`);
+                        if (!styles.verifiedIcon.includes('fill:')) {
+                            styles.verifiedIcon += `; fill: ${value}`;
+                        }
+                    });
+            });
+        new Setting(headerSection)
+            .setName('认证图标尺寸')
+            .setDesc('设置认证图标的宽度和高度（单位：px）')
+            .addText(text => {
+                text.setValue('25')
+                    .setPlaceholder('输入图标尺寸')
+                    .onChange(value => {
+                        const size = value + 'px';
+                        styles.verifiedIcon = styles.verifiedIcon
+                            .replace(/width:\s*[^;]+/, `width: ${size}`)
+                            .replace(/height:\s*[^;]+/, `height: ${size}`);
+                    });
+            });
+
+        new Setting(headerSection)
+            .setName('认证图标间距')
+            .setDesc('设置认证图标的左边距（单位：px）')
+            .addText(text => {
+                text.setValue('-5')
+                    .setPlaceholder('输入左边距')
+                    .onChange(value => {
+                        const margin = value + 'px';
+                        styles.verifiedIcon = styles.verifiedIcon
+                            .replace(/margin-left:\s*[^;]+/, `margin-left: ${margin}`);
                     });
             });
     }
