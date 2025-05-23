@@ -13,7 +13,7 @@
             "userName": "font-size: 16px; font-weight: 600; color: #e2d9f3; letter-spacing: 0.02em;",
             "userId": "font-size: 14px; color: #a393c9;",
             "postTime": "font-size: 13px; color: #6d617f;",
-            "verifiedIcon": "width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; color: #1a1721; background-color: #b490ff; border-radius: 6px; font-size: 10px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(180,144,255,0.2);"
+            "verifiedIcon": "width: 20px; height: 20px; margin-left: -5px; fill: #1DA1F2;"
         },
         "footer": {
             "container": "position: absolute; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 14px; padding: 16px; color: #a393c9; font-size: 13px; border-top: 1px solid #2a2433; background: rgba(26,23,33,0.95); backdrop-filter: blur(12px);",
