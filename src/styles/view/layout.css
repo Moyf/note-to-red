@@ -23,7 +23,7 @@
 .red-preview-container {
     position: relative;
     min-width: 490px;
-    height: 100%;
+    aspect-ratio: 3/4;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -90,7 +90,7 @@
 /* 导航容器 */
 .red-nav-container {
     position: fixed;
-    bottom: 120px;  /* 调整位置避免与底部工具栏重叠 */
+    bottom: 110px;  /* 调整位置避免与底部工具栏重叠 */
     left: 50%;
     transform: translateX(-50%);
     display: flex;
