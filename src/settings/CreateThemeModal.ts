@@ -566,6 +566,34 @@ export class CreateThemeModal extends Modal {
                             .replace(/border:\s*1px solid\s*#[a-fA-F0-9]+80/, `border: 1px solid ${value}80`);
                     });
             });
+        
+        // 添加头像圆角设置
+        new Setting(headerSection)
+            .setName('头像圆角')
+            .setDesc('设置头像的圆角大小（单位：px）。设置为-1表示圆形，大于1则有圆角')
+            .addText(text => {
+                // 获取当前圆角值
+                const currentRadius = styles.avatar.container.match(/border-radius:\s*([\d-]+)px/)?.[1] || '12';
+                text.setValue(currentRadius)
+                    .setPlaceholder('输入圆角大小')
+                    .onChange(value => {
+                        // 解析输入值
+                        let radius: string;
+                        if (value === '-1') {
+                            // 设置为圆形（50%）
+                            radius = '50%';
+                        } else {
+                            // 设置为具体的像素值
+                            const pixelValue = parseInt(value) || 12;
+                            radius = `${pixelValue}px`;
+                        }
+                        
+                        // 更新样式
+                        styles.avatar.container = styles.avatar.container
+                            .replace(/border-radius:\s*[^;]+/, `border-radius: ${radius}`);
+                    });
+            });
+            
         new Setting(headerSection)
             .setName('认证图标颜色')
             .setDesc('设置认证图标的颜色')
