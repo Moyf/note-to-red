@@ -19,7 +19,7 @@ export default class RedPlugin extends Plugin {
         this.themeManager = new ThemeManager(this.app, this.settingsManager);
 
         // 初始化转换器
-        RedConverter.initialize(this.app);
+        RedConverter.initialize(this.app, this);
 
         DonateManager.initialize(this.app, this);
 
