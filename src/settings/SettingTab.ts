@@ -58,10 +58,27 @@ export class RedSettingTab extends PluginSettingTab {
     }
 
     private renderBasicSettings(containerEl: HTMLElement): void {
-        // 标题级别设置
-        new Setting(containerEl)
+        // 排版管理区域
+        const typographySection = containerEl.createDiv('red-settings-subsection');
+        const typographyHeader = typographySection.createDiv('red-settings-subsection-header');
+        const typographyToggle = typographyHeader.createSpan('red-settings-subsection-toggle');
+        setIcon(typographyToggle, 'chevron-right');
+        
+        typographyHeader.createEl('h3', { text: '排版管理' });
+        
+        const typographyContent = typographySection.createDiv('red-settings-subsection-content');
+        
+        // 折叠/展开逻辑
+        typographyHeader.addEventListener('click', () => {
+            const isExpanded = !typographySection.hasClass('is-expanded');
+            typographySection.toggleClass('is-expanded', isExpanded);
+            setIcon(typographyToggle, isExpanded ? 'chevron-down' : 'chevron-right');
+        });
+
+        // 内容分割标题级别设置
+        new Setting(typographyContent)
             .setName('内容分割标题级别')
-            .setDesc('选择用于分割内容生成图片的标题级别\n• 一级标题(#): 每个一级标题及其下方内容生成一张图片\n• 二级标题(##): 每个二级标题及其下方内容生成一张图片')
+            .setDesc('选择用于分割内容生成图片的标题级别：')
             .addDropdown(dropdown => dropdown
                 .addOption('h1', '一级标题(#) - 按大章节分割')
                 .addOption('h2', '二级标题(##) - 按小章节分割')

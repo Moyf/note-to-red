@@ -45,7 +45,7 @@ export const DEFAULT_SETTINGS: RedSettings = {
     userId: '@Yeban',
     showTime: true,
     timeFormat: 'zh-CN',
-    headingLevel: 'h1', // 默认使用一级标题
+    headingLevel: 'h2', // 默认使用二级标题
     footerLeftText: '夜半过后，光明便启程',
     footerRightText: '欢迎关注公众号：夜半',
     customFonts: [

@@ -316,12 +316,12 @@ export class RedView extends ItemView {
             attr: { 'aria-label': '使用指南' }
         });
         setIcon(helpButton, 'help');
-
+        const headingLevel = this.settingsManager.getSettings().headingLevel || 'h1';
         parent.createEl('div', {
             cls: 'red-help-tooltip',
             text: `使用指南：
-                1. 核心用法：用一级标题(#)分割内容，每个标题生成一张小红书配图
-                2. 内容分页：在一级标题下使用 --- 可将内容分割为多页，每页都会带上标题
+                1. 核心用法：用${headingLevel === 'h1' ? '一级标题(#)' : '二级标题(##)'}来分割内容，每个标题生成一张小红书配图
+                2. 内容分页：在${headingLevel === 'h1' ? '一级标题(#)' : '二级标题(##)'}下使用 --- 可将内容分割为多页，每页都会带上标题
                 3. 首图制作：单独调整首节字号至20-24px，使用【下载当前页】导出
                 4. 长文优化：内容较多的章节可调小字号至14-16px后单独导出
                 5. 批量操作：保持统一字号时，用【导出全部页】批量生成
