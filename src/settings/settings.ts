@@ -21,6 +21,7 @@ interface RedSettings {
     showFooter?: boolean;
     footerLeftText: string;
     footerRightText: string;
+    headingLevel: 'h1' | 'h2'; // 标题级别选项
     customFonts: { value: string; label: string; isPreset?: boolean }[];  // 添加自定义字体配置
     backgroundSettings: {
         imageUrl: string;
@@ -44,6 +45,7 @@ export const DEFAULT_SETTINGS: RedSettings = {
     userId: '@Yeban',
     showTime: true,
     timeFormat: 'zh-CN',
+    headingLevel: 'h1', // 默认使用一级标题
     footerLeftText: '夜半过后，光明便启程',
     footerRightText: '欢迎关注公众号：夜半',
     customFonts: [

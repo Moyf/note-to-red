@@ -1,27 +1,34 @@
 import { App } from 'obsidian';
+import RedPlugin from './main';
 
 export class RedConverter {
     private static app: App;
+    private static plugin: RedPlugin;
 
-    static initialize(app: App) {
+    static initialize(app: App, plugin: RedPlugin) {
         this.app = app;
+        this.plugin = plugin;
     }
 
     static hasValidContent(element: HTMLElement): boolean {
-        const headers = element.querySelectorAll('h2');
+        const settings = this.plugin?.settingsManager?.getSettings();
+        const headingLevel = settings?.headingLevel || 'h1';
+        const headers = element.querySelectorAll(headingLevel);
         return headers.length > 0;
     }
 
     static formatContent(element: HTMLElement): void {
-        const headers = Array.from(element.querySelectorAll('h2'));
+        const settings = this.plugin?.settingsManager?.getSettings();
+        const headingLevel = settings?.headingLevel || 'h1';
+        const headers = Array.from(element.querySelectorAll(headingLevel));
         
         if (headers.length === 0) {
             element.empty();
             const tip = element.createEl('div', {
                 cls: 'red-empty-message',
                 text: `⚠️ 温馨提示
-                        请使用二级标题(##)来分割内容
-                        每个二级标题将生成一张独立的图片
+                        请使用${headingLevel === 'h1' ? '一级标题(#)' : '二级标题(##)'}来分割内容
+                        每个${headingLevel === 'h1' ? '一级标题' : '二级标题'}将生成一张独立的图片
                         现在编辑文档，实时预览效果`
             });
             // 触发自定义事件
@@ -98,11 +105,14 @@ export class RedConverter {
     }
 
         private static createContentSection(header: Element, index: number): HTMLElement | null {
+        const settings = this.plugin?.settingsManager?.getSettings();
+        const headingLevel = settings?.headingLevel || 'h1';
+        
         // 获取当前标题到下一个标题之间的所有内容
         let content: Element[] = [];
         let current = header.nextElementSibling;
         
-        while (current && current.tagName !== 'H2') {
+        while (current && current.tagName !== headingLevel.toUpperCase()) {
             content.push(current.cloneNode(true) as Element);
             current = current.nextElementSibling;
         }
