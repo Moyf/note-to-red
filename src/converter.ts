@@ -8,20 +8,20 @@ export class RedConverter {
     }
 
     static hasValidContent(element: HTMLElement): boolean {
-        const headers = element.querySelectorAll('h2');
+        const headers = element.querySelectorAll('h1');
         return headers.length > 0;
     }
 
     static formatContent(element: HTMLElement): void {
-        const headers = Array.from(element.querySelectorAll('h2'));
+        const headers = Array.from(element.querySelectorAll('h1'));
         
         if (headers.length === 0) {
             element.empty();
             const tip = element.createEl('div', {
                 cls: 'red-empty-message',
                 text: `⚠️ 温馨提示
-                        请使用二级标题(##)来分割内容
-                        每个二级标题将生成一张独立的图片
+                        请使用一级标题(#)来分割内容
+                        每个一级标题将生成一张独立的图片
                         现在编辑文档，实时预览效果`
             });
             // 触发自定义事件
@@ -102,7 +102,7 @@ export class RedConverter {
         let content: Element[] = [];
         let current = header.nextElementSibling;
         
-        while (current && current.tagName !== 'H2') {
+        while (current && current.tagName !== 'H1') {
             content.push(current.cloneNode(true) as Element);
             current = current.nextElementSibling;
         }
